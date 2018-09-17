@@ -1,18 +1,21 @@
 package com.agafonova.inhale;
 
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.LinearLayout;
 import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getName();
+    private static final int ENTER_FADE_DURATION = 6000;
+    private static final int EXIT_FADE_DURATION = 3000;
+    private AnimationDrawable animationDrawable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +26,18 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //Animate background gradients
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.main_rl);
+        animationDrawable = (AnimationDrawable) linearLayout.getBackground();
+        animationDrawable.setEnterFadeDuration(ENTER_FADE_DURATION);
+        animationDrawable.setExitFadeDuration(EXIT_FADE_DURATION);
+
+        //Initialize Firebase Crashlytics debugger
+        final Fabric fabric = new Fabric.Builder(this)
+                .kits(new Crashlytics())
+                .debuggable(true)
+                .build();
+        Fabric.with(fabric);
     }
 
     @Override
@@ -47,18 +62,20 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void forceCrash(View view) {
-
-        final Fabric fabric = new Fabric.Builder(this)
-                .kits(new Crashlytics())
-                .debuggable(true)
-                .build();
-        Fabric.with(fabric);
-
-        Crashlytics.log(Log.VERBOSE, TAG, "forceCrash");
-        Crashlytics.logException(new Exception("Non-fatal exception: something went wrong!"));
-
-        throw new RuntimeException("This is a crash");
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (animationDrawable != null && !animationDrawable.isRunning())
+            animationDrawable.start();
+        //Crashlytics.log(Log.VERBOSE, TAG, "onResume");
+        Crashlytics.logException(new Exception("Non-fatal exception: MainActivity onResume"));
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (animationDrawable != null && animationDrawable.isRunning())
+            animationDrawable.stop();
+        Crashlytics.logException(new Exception("Non-fatal exception: MainActivity onPause"));
+    }
 }

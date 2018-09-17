@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<animation-list
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/selected" android:oneshot="false">
+    <item android:drawable="@drawable/sunset_gradient" android:duration="50000"  />
+    <item android:drawable="@drawable/sublime_gradient" android:duration="50000" />
+    <item android:drawable="@drawable/celestial_gradient" android:duration="50000" />
+</animation-list>

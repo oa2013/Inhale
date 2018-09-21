@@ -2,35 +2,64 @@ package com.agafonova.inhale;
 
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
+import android.view.View;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
 import com.crashlytics.android.Crashlytics;
+
+import antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getName();
-    private static final int ENTER_FADE_DURATION = 6000;
+    private static final int ENTER_FADE_DURATION = 100;
     private static final int EXIT_FADE_DURATION = 3000;
+    private long mDefaultTimeLeftInMillis = 600000;
+
+    private static final String START = "START";
+    private static final String STOP = "STOP";
+
     private AnimationDrawable animationDrawable;
+    private int mMaxProgress = 60;
+    private CountDownTimer mTimer;
+    private boolean mIsTimerRunning;
+
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+
+    @BindView(R.id.circular_progress)
+    CircularProgressIndicator mIndicator;
+
+    @BindView(R.id.button_length)
+    Button mButtonLength;
+
+    @BindView(R.id.button_stopStart)
+    Button mButtonStopStart;
+
+    @BindView(R.id.tv_exercise_mode)
+    TextView mExerciseMode;
+
+    @BindView(R.id.tv_breathing_instructions)
+    TextView mBreathingInstructions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Bind ButterKnife and start Crashlytics
+        ButterKnife.bind(this);
         Fabric.with(this, new Crashlytics());
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        //Animate background gradients
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.main_rl);
-        animationDrawable = (AnimationDrawable) linearLayout.getBackground();
-        animationDrawable.setEnterFadeDuration(ENTER_FADE_DURATION);
-        animationDrawable.setExitFadeDuration(EXIT_FADE_DURATION);
 
         //Initialize Firebase Crashlytics debugger
         final Fabric fabric = new Fabric.Builder(this)
@@ -38,6 +67,54 @@ public class MainActivity extends AppCompatActivity {
                 .debuggable(true)
                 .build();
         Fabric.with(fabric);
+
+        setSupportActionBar(mToolbar);
+
+        //Animate background gradients
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.main_rl);
+        animationDrawable = (AnimationDrawable) layout.getBackground();
+        animationDrawable.setEnterFadeDuration(ENTER_FADE_DURATION);
+        animationDrawable.setExitFadeDuration(EXIT_FADE_DURATION);
+
+        //Set indicator max time
+        mIndicator.setMaxProgress(mMaxProgress);
+
+        //Set start/stop button text
+        mButtonStopStart.setText(START);
+
+        //Setup start/stop button listener
+        mButtonStopStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mIsTimerRunning) {
+                    resetTimer();
+                } else {
+                    startTimer();
+                }
+            }
+        });
+    }
+
+    private void resetTimer() {
+        mTimer.cancel();
+        mIsTimerRunning = false;
+    }
+
+    private void startTimer() {
+
+        mTimer = new CountDownTimer(mMaxProgress * 1000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                mIndicator.setCurrentProgress(millisUntilFinished/1000);
+            }
+
+            public void onFinish() {
+                mIsTimerRunning = false;
+                mButtonStopStart.setText(STOP);
+            }
+        }.start();
+
+        mIsTimerRunning = true;
     }
 
     @Override

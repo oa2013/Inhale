@@ -1,12 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/gradient_animation"
     android:id="@+id/main_rl">
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/tv_breathing_instructions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/tv_breathing_margin"
+        android:layout_centerHorizontal="true"
+        android:text="@string/breathing_instructions"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/tv_breathing_textSize"/>
+
+    <antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator
+        android:id="@+id/circular_progress"
+        android:layout_width="@dimen/progress_width"
+        android:layout_height="@dimen/progress_height"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/progress_margin"
+        android:layout_below="@id/tv_breathing_instructions"
+        app:progressColor="@color/colorAccent"
+        app:progressBackgroundColor="@color/white"
+        app:progressStrokeWidth="8dp"
+        app:drawDot="true"
+        app:dotColor="@color/colorAccent"
+        app:dotWidth="16dp"
+        app:textSize="@dimen/progress_textSize"
+        app:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/tv_exercise_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/exercise_mode_topMargin"
+        android:text="@string/tv_exercisemode_text"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/exercise_mode_textSize"
+        android:layout_below="@id/circular_progress"/>
+
+
+    <LinearLayout
+        android:id="@+id/buttonLayout"
+        android:layout_below="@id/tv_exercise_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/button_margin_general"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button_length"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_length"
+            android:textAllCaps="true"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/exercise_mode_textSize"
+            android:backgroundTint="@color/white"
+            android:padding="@dimen/button_padding"
+            android:layout_marginLeft="@dimen/button_margin_left"
+            android:layout_marginTop="@dimen/button_margin_general"
+            android:layout_weight="1.0"
+            />
+
+        <Button
+            android:id="@+id/button_stopStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_stopStart"
+            android:textAllCaps="true"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/exercise_mode_textSize"
+            android:backgroundTint="@color/white"
+            android:padding="@dimen/button_padding"
+            android:layout_marginRight="@dimen/button_margin_right"
+            android:layout_marginTop="@dimen/button_margin_general"
+            android:layout_weight="1.0"
+            />
+
+    </LinearLayout>
+
+</RelativeLayout>

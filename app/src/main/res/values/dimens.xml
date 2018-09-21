@@ -1,3 +1,14 @@
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="tv_breathing_margin">100dp</dimen>
+    <dimen name="tv_breathing_textSize">30sp</dimen>
+    <dimen name="progress_width">200dp</dimen>
+    <dimen name="progress_height">200dp</dimen>
+    <dimen name="progress_textSize">18sp</dimen>
+    <dimen name="progress_margin">20dp</dimen>
+    <dimen name="exercise_mode_topMargin">16dp</dimen>
+    <dimen name="exercise_mode_textSize">18sp</dimen>
+    <dimen name="button_padding">10dp</dimen>
+    <dimen name="button_margin_left">36dp</dimen>
+    <dimen name="button_margin_right">36dp</dimen>
+    <dimen name="button_margin_general">8dp</dimen>
 </resources>

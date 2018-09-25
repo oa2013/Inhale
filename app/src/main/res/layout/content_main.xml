@@ -30,6 +30,7 @@
         app:progressColor="@color/colorAccent"
         app:progressBackgroundColor="@color/white"
         app:progressStrokeWidth="8dp"
+        app:enableProgressAnimation="true"
         app:drawDot="true"
         app:dotColor="@color/colorAccent"
         app:dotWidth="16dp"

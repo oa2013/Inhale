@@ -5,15 +5,14 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.crashlytics.android.Crashlytics;
-
 import antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,13 +23,14 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
     private static final int ENTER_FADE_DURATION = 100;
     private static final int EXIT_FADE_DURATION = 3000;
-    private long mDefaultTimeLeftInMillis = 600000;
 
     private static final String START = "START";
     private static final String STOP = "STOP";
 
     private AnimationDrawable animationDrawable;
-    private int mMaxProgress = 60;
+
+    //The UI is 2 seconds too slow, so to show 60 seconds, set 62 seconds
+    private long mTotalSeconds = 62;
     private CountDownTimer mTimer;
     private boolean mIsTimerRunning;
 
@@ -77,7 +77,9 @@ public class MainActivity extends AppCompatActivity {
         animationDrawable.setExitFadeDuration(EXIT_FADE_DURATION);
 
         //Set indicator max time
-        mIndicator.setMaxProgress(mMaxProgress);
+        mIndicator.setDirection(0);
+        mIndicator.setMaxProgress(mTotalSeconds);
+        mIndicator.setProgressTextAdapter(TIME_TEXT_ADAPTER);
 
         //Set start/stop button text
         mButtonStopStart.setText(START);
@@ -100,20 +102,27 @@ public class MainActivity extends AppCompatActivity {
         mIsTimerRunning = false;
     }
 
+    /*
+    * Run the CountDownTimer in reverse to count up (for each inhale and exhale):
+    * https://en.proft.me/2017/11/18/how-create-count-timer-android/
+    * */
+
     private void startTimer() {
 
-        mTimer = new CountDownTimer(mMaxProgress * 1000, 1000) {
+        mTimer = new CountDownTimer(mTotalSeconds * 1000, 1000) {
 
+            //Run in reverse to count up...
             public void onTick(long millisUntilFinished) {
-                mIndicator.setCurrentProgress(millisUntilFinished/1000);
+                mIndicator.setCurrentProgress((mTotalSeconds*1000-millisUntilFinished)/1000);
             }
 
             public void onFinish() {
                 mIsTimerRunning = false;
-                mButtonStopStart.setText(STOP);
+                mButtonStopStart.setText(START);
             }
         }.start();
 
+        mButtonStopStart.setText(STOP);
         mIsTimerRunning = true;
     }
 
@@ -144,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         if (animationDrawable != null && !animationDrawable.isRunning())
             animationDrawable.start();
-        //Crashlytics.log(Log.VERBOSE, TAG, "onResume");
+        Crashlytics.log(Log.VERBOSE, TAG, "onResume");
         Crashlytics.logException(new Exception("Non-fatal exception: MainActivity onResume"));
     }
 
@@ -155,4 +164,31 @@ public class MainActivity extends AppCompatActivity {
             animationDrawable.stop();
         Crashlytics.logException(new Exception("Non-fatal exception: MainActivity onPause"));
     }
+
+    /*
+    * Source: https://github.com/antonKozyriatskyi/CircularProgressIndicator#formatting-progress-text
+    * */
+    private static final CircularProgressIndicator.ProgressTextAdapter TIME_TEXT_ADAPTER = new CircularProgressIndicator.ProgressTextAdapter() {
+        @Override
+        public String formatText(double time) {
+            int hours = (int) (time / 3600);
+            time %= 3600;
+            int minutes = (int) (time / 60);
+            int seconds = (int) (time % 60);
+            StringBuilder sb = new StringBuilder();
+            if (hours < 10) {
+                sb.append(0);
+            }
+            sb.append(hours).append(":");
+            if (minutes < 10) {
+                sb.append(0);
+            }
+            sb.append(minutes).append(":");
+            if (seconds < 10) {
+                sb.append(0);
+            }
+            sb.append(seconds);
+            return sb.toString();
+        }
+    };
 }

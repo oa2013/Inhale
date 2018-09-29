@@ -1,9 +1,13 @@
 <resources>
     <dimen name="standard_margin">16dp</dimen>
     <dimen name="smaller_margin">8dp</dimen>
+    <dimen name="tv_breathing_margin_top">64dp</dimen>
     <dimen name="tv_breathing_textSize">30sp</dimen>
     <dimen name="timer_textSize">18sp</dimen>
-    <dimen name="timer_radius">50dp</dimen>
+    <dimen name="timer_radius">40dp</dimen>
+    <dimen name="timer_radius_landscape">20dp</dimen>
+    <dimen name="timer_radius_large">140dp</dimen>
+    <dimen name="timer_radius_large_landscape">120dp</dimen>
     <dimen name="exercise_mode_topMargin">16dp</dimen>
     <dimen name="exercise_mode_textSize">18sp</dimen>
     <dimen name="button_padding">10dp</dimen>

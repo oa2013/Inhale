@@ -11,10 +11,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.agafonova.inhale.model.TimerData;
 import com.crashlytics.android.Crashlytics;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
@@ -27,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     private static final int ENTER_FADE_DURATION = 100;
     private static final int EXIT_FADE_DURATION = 3000;
     private static final String TIME_FORMAT = "HH:mm:ss";
+    private static final String TIMER_DATA_KEY = "TIMER_DATA";
 
     private static final String START = "START";
     private static final String STOP = "STOP";
@@ -35,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     private long mTotalSeconds = 30;
     private int mTimerCounter;
     private LinearTimer mTimer;
+    private TimerData mTimerData;
 
     @BindView(R.id.time)
     TextView mTime;
@@ -93,6 +99,16 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
                 .getCountUpdate(LinearTimer.COUNT_UP_TIMER, 1000)
                 .build();
 
+        if(savedInstanceState == null)
+        {
+            mTimerData = new TimerData();
+            mTimerData.setmTime("00:00:00");
+        }
+        else {
+            mTimerData = savedInstanceState.getParcelable(TIMER_DATA_KEY);
+            mTime.setText(mTimerData.getmTime());
+        }
+
         //Setup start/stop button listener
         mButtonStopStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
                 mTimerCounter++;
                 mButtonStopStart.setText(STOP);
             }
-            //pause the timer on odd number of clicks
+            //pause the timer on odd number of clicks (when the timer stops)
             else {
                 mTimer.pauseTimer();
                 mTimerCounter++;
@@ -157,18 +173,18 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     @Override
     protected void onResume() {
         super.onResume();
-        if (animationDrawable != null && !animationDrawable.isRunning())
+        if (animationDrawable != null && !animationDrawable.isRunning()) {
             animationDrawable.start();
-        Crashlytics.log(Log.VERBOSE, TAG, "onResume");
-        Crashlytics.logException(new Exception("Non-fatal exception: MainActivity onResume"));
+        }
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (animationDrawable != null && animationDrawable.isRunning())
+        if (animationDrawable != null && animationDrawable.isRunning()) {
             animationDrawable.stop();
-        Crashlytics.logException(new Exception("Non-fatal exception: MainActivity onPause"));
+        }
     }
 
     @Override
@@ -188,10 +204,23 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         Date date = new Date(tickUpdateInMillis);
 
         mTime.setText(dateFormat.format(date));
+        mTimerData.setmTime(dateFormat.format(date));
     }
 
     @Override
     public void onTimerReset() {
-        mTime.setText(R.string.placeholder);
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(TIMER_DATA_KEY, mTimerData);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mTimerData = savedInstanceState.getParcelable(TIMER_DATA_KEY);
+    }
+
 }

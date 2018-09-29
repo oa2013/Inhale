@@ -19,9 +19,9 @@
             android:id="@+id/tv_breathing_instructions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/tv_breathing_margin_top"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/tv_breathing_margin_top"
             android:padding="4dp"
             android:text="@string/breathing_instructions"
             android:textAllCaps="true"
@@ -65,7 +65,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_exercise_mode"
             app:layout_constraintVertical_bias="0.212"
             app:progressColor="@color/colorAccent"
-            app:radius="@dimen/timer_radius"
+            app:radius="@dimen/timer_radius_large_landscape"
             app:strokeWidth="2dp" />
 
         <TextView

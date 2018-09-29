@@ -65,7 +65,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_exercise_mode"
             app:layout_constraintVertical_bias="0.212"
             app:progressColor="@color/colorAccent"
-            app:radius="@dimen/timer_radius"
+            app:radius="@dimen/timer_radius_landscape"
             app:strokeWidth="2dp" />
 
         <TextView

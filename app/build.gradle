@@ -43,7 +43,7 @@ dependencies {
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
     implementation 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
-    implementation 'com.github.antonKozyriatskyi:CircularProgressIndicator:1.2.0'
+    implementation 'com.github.krtkush:LinearTimer:v2.1.1'
     implementation 'com.dynamitechetan.flowinggradient:flowinggradient:1.1'
 
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"

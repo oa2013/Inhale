@@ -2,7 +2,7 @@ package com.agafonova.inhale;
 
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.os.CountDownTimer;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -10,35 +10,37 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.crashlytics.android.Crashlytics;
-import antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
+import io.github.krtkush.lineartimer.LinearTimer;
+import io.github.krtkush.lineartimer.LinearTimerView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LinearTimer.TimerListener  {
 
     private static final String TAG = MainActivity.class.getName();
     private static final int ENTER_FADE_DURATION = 100;
     private static final int EXIT_FADE_DURATION = 3000;
+    private static final String TIME_FORMAT = "HH:mm:ss";
 
     private static final String START = "START";
     private static final String STOP = "STOP";
 
     private AnimationDrawable animationDrawable;
+    private long mTotalSeconds = 30;
+    private int mTimerCounter;
+    private LinearTimer mTimer;
 
-    //The UI is 2 seconds too slow, so to show 60 seconds, set 62 seconds
-    private long mTotalSeconds = 62;
-    private CountDownTimer mTimer;
-    private boolean mIsTimerRunning;
+    @BindView(R.id.time)
+    TextView mTime;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-
-    @BindView(R.id.circular_progress)
-    CircularProgressIndicator mIndicator;
 
     @BindView(R.id.button_length)
     Button mButtonLength;
@@ -71,59 +73,63 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
 
         //Animate background gradients
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.main_rl);
+        ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.main_rl);
         animationDrawable = (AnimationDrawable) layout.getBackground();
         animationDrawable.setEnterFadeDuration(ENTER_FADE_DURATION);
         animationDrawable.setExitFadeDuration(EXIT_FADE_DURATION);
 
-        //Set indicator max time
-        mIndicator.setDirection(0);
-        mIndicator.setMaxProgress(mTotalSeconds);
-        mIndicator.setProgressTextAdapter(TIME_TEXT_ADAPTER);
-
         //Set start/stop button text
         mButtonStopStart.setText(START);
+
+        //Setup the timer
+        LinearTimerView linearTimerView = findViewById(R.id.linearTimer);
+        mTotalSeconds = mTotalSeconds*1000;
+        mTimerCounter = 0;
+
+        mTimer = new LinearTimer.Builder()
+                .linearTimerView(linearTimerView)
+                .duration(mTotalSeconds)
+                .timerListener(this)
+                .getCountUpdate(LinearTimer.COUNT_UP_TIMER, 1000)
+                .build();
 
         //Setup start/stop button listener
         mButtonStopStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mIsTimerRunning) {
-                    resetTimer();
-                } else {
-                    startTimer();
-                }
+                startTimer();
             }
         });
     }
 
-    private void resetTimer() {
-        mTimer.cancel();
-        mIsTimerRunning = false;
-    }
-
-    /*
-    * Run the CountDownTimer in reverse to count up (for each inhale and exhale):
-    * https://en.proft.me/2017/11/18/how-create-count-timer-android/
-    * */
-
     private void startTimer() {
 
-        mTimer = new CountDownTimer(mTotalSeconds * 1000, 1000) {
-
-            //Run in reverse to count up...
-            public void onTick(long millisUntilFinished) {
-                mIndicator.setCurrentProgress((mTotalSeconds*1000-millisUntilFinished)/1000);
+        try
+        {
+            //start the timer with the first click
+            if(mTimerCounter == 0) {
+                mTimer.startTimer();
+                mTimerCounter++;
+                mButtonStopStart.setText(STOP);
             }
-
-            public void onFinish() {
-                mIsTimerRunning = false;
+            //restart on even number of clicks
+            else if ((mTimerCounter % 2) == 0)
+            {
+                mTimer.restartTimer();
+                mTime.setText(R.string.placeholder);
+                mTimerCounter++;
+                mButtonStopStart.setText(STOP);
+            }
+            //pause the timer on odd number of clicks
+            else {
+                mTimer.pauseTimer();
+                mTimerCounter++;
                 mButtonStopStart.setText(START);
             }
-        }.start();
-
-        mButtonStopStart.setText(STOP);
-        mIsTimerRunning = true;
+        }
+        catch (Exception e) {
+            Crashlytics.log(Log.VERBOSE, TAG, e.toString());
+        }
     }
 
     @Override
@@ -165,30 +171,27 @@ public class MainActivity extends AppCompatActivity {
         Crashlytics.logException(new Exception("Non-fatal exception: MainActivity onPause"));
     }
 
-    /*
-    * Source: https://github.com/antonKozyriatskyi/CircularProgressIndicator#formatting-progress-text
-    * */
-    private static final CircularProgressIndicator.ProgressTextAdapter TIME_TEXT_ADAPTER = new CircularProgressIndicator.ProgressTextAdapter() {
-        @Override
-        public String formatText(double time) {
-            int hours = (int) (time / 3600);
-            time %= 3600;
-            int minutes = (int) (time / 60);
-            int seconds = (int) (time % 60);
-            StringBuilder sb = new StringBuilder();
-            if (hours < 10) {
-                sb.append(0);
-            }
-            sb.append(hours).append(":");
-            if (minutes < 10) {
-                sb.append(0);
-            }
-            sb.append(minutes).append(":");
-            if (seconds < 10) {
-                sb.append(0);
-            }
-            sb.append(seconds);
-            return sb.toString();
+    @Override
+    public void animationComplete() {
+
+    }
+
+    @Override
+    public void timerTick(long tickUpdateInMillis) {
+
+        if(tickUpdateInMillis >= mTotalSeconds) {
+            mTimerCounter = 2;
         }
-    };
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(TIME_FORMAT);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Date date = new Date(tickUpdateInMillis);
+
+        mTime.setText(dateFormat.format(date));
+    }
+
+    @Override
+    public void onTimerReset() {
+        mTime.setText(R.string.placeholder);
+    }
 }

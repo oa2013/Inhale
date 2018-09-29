@@ -5,4 +5,5 @@
     <string name="tv_exercisemode_text">4 counts : 2 counts</string>
     <string name="button_length">Length</string>
     <string name="button_stopStart">Start</string>
+    <string name="placeholder">00:00:00</string>
 </resources>

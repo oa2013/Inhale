@@ -1,94 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_rl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_animation"
-    android:id="@+id/main_rl">
+    android:background="@drawable/gradient_animation">
 
     <TextView
         android:id="@+id/tv_breathing_instructions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="@dimen/tv_breathing_margin"
         android:layout_centerHorizontal="true"
+        android:padding="4dp"
+        android:layout_margin="@dimen/standard_margin"
         android:text="@string/breathing_instructions"
         android:textAllCaps="true"
         android:textColor="@color/white"
-        android:textSize="@dimen/tv_breathing_textSize"/>
+        android:textSize="@dimen/tv_breathing_textSize"
+        app:layout_constraintBottom_toTopOf="@+id/linearTimer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator
-        android:id="@+id/circular_progress"
-        android:layout_width="@dimen/progress_width"
-        android:layout_height="@dimen/progress_height"
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/progress_margin"
-        android:layout_below="@id/tv_breathing_instructions"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="@dimen/smaller_margin"
+        android:layout_marginEnd="@dimen/standard_margin"
+        android:layout_marginStart="@dimen/standard_margin"
+        android:layout_marginTop="@dimen/smaller_margin"
+        android:text="@string/placeholder"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/linearTimer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/linearTimer" />
+
+    <io.github.krtkush.lineartimer.LinearTimerView
+        android:id="@+id/linearTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        app:initialColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_exercise_mode"
+        app:layout_constraintVertical_bias="0.192"
         app:progressColor="@color/colorAccent"
-        app:progressBackgroundColor="@color/white"
-        app:progressStrokeWidth="8dp"
-        app:enableProgressAnimation="true"
-        app:drawDot="true"
-        app:dotColor="@color/colorAccent"
-        app:dotWidth="16dp"
-        app:textSize="@dimen/progress_textSize"
-        app:textColor="@color/white" />
+        app:radius="@dimen/timer_radius"
+        app:strokeWidth="2dp" />
 
     <TextView
         android:id="@+id/tv_exercise_mode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/exercise_mode_topMargin"
+        android:layout_marginEnd="@dimen/standard_margin"
+        android:layout_marginStart="@dimen/standard_margin"
+        android:layout_marginTop="@dimen/smaller_margin"
         android:text="@string/tv_exercisemode_text"
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="@dimen/exercise_mode_textSize"
-        android:layout_below="@id/circular_progress"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.500"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_breathing_instructions" />
 
-
-    <LinearLayout
-        android:id="@+id/buttonLayout"
-        android:layout_below="@id/tv_exercise_mode"
+    <Button
+        android:id="@+id/button_length"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/button_margin_general"
-        android:layout_centerHorizontal="true"
-        android:orientation="horizontal">
+        android:layout_marginBottom="@dimen/standard_margin"
+        android:layout_marginEnd="@dimen/standard_margin"
+        android:layout_marginStart="@dimen/standard_margin"
+        android:layout_marginTop="@dimen/standard_margin"
+        android:layout_weight="1.0"
+        android:backgroundTint="@color/white"
+        android:padding="@dimen/button_padding"
+        android:text="@string/button_length"
+        android:textAllCaps="true"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/exercise_mode_textSize"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineVertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guidelineHorizontal" />
 
-        <Button
-            android:id="@+id/button_length"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/button_length"
-            android:textAllCaps="true"
-            android:textColor="@color/colorAccent"
-            android:textSize="@dimen/exercise_mode_textSize"
-            android:backgroundTint="@color/white"
-            android:padding="@dimen/button_padding"
-            android:layout_marginLeft="@dimen/button_margin_left"
-            android:layout_marginTop="@dimen/button_margin_general"
-            android:layout_weight="1.0"
-            />
+    <Button
+        android:id="@+id/button_stopStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/standard_margin"
+        android:layout_marginEnd="@dimen/standard_margin"
+        android:layout_marginStart="@dimen/standard_margin"
+        android:layout_marginTop="@dimen/standard_margin"
+        android:layout_weight="1.0"
+        android:backgroundTint="@color/white"
+        android:padding="@dimen/button_padding"
+        android:text="@string/button_stopStart"
+        android:textAllCaps="true"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/exercise_mode_textSize"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guidelineVertical"
+        app:layout_constraintTop_toTopOf="@+id/guidelineHorizontal" />
 
-        <Button
-            android:id="@+id/button_stopStart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/button_stopStart"
-            android:textAllCaps="true"
-            android:textColor="@color/colorAccent"
-            android:textSize="@dimen/exercise_mode_textSize"
-            android:backgroundTint="@color/white"
-            android:padding="@dimen/button_padding"
-            android:layout_marginRight="@dimen/button_margin_right"
-            android:layout_marginTop="@dimen/button_margin_general"
-            android:layout_weight="1.0"
-            />
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelineVertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
 
-    </LinearLayout>
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelineHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.8" />
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

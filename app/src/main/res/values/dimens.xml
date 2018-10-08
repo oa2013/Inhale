@@ -1,6 +1,7 @@
 <resources>
     <dimen name="standard_margin">16dp</dimen>
     <dimen name="smaller_margin">8dp</dimen>
+    <dimen name="big_margin">64dp</dimen>
     <dimen name="tv_breathing_margin_top">64dp</dimen>
     <dimen name="tv_breathing_textSize">30sp</dimen>
     <dimen name="timer_textSize">18sp</dimen>
@@ -14,4 +15,8 @@
     <dimen name="button_margin_left">36dp</dimen>
     <dimen name="button_margin_right">36dp</dimen>
     <dimen name="button_margin_general">8dp</dimen>
+    <dimen name="rv_length_height">400dp</dimen>
+    <dimen name="rv_length_height_landscape">200dp</dimen>
+    <dimen name="rv_text_size">18sp</dimen>
+    <dimen name="rv_margin">32dp</dimen>
 </resources>

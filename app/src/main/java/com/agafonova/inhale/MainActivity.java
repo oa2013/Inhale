@@ -1,5 +1,6 @@
 package com.agafonova.inhale;
 
+import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -11,14 +12,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.agafonova.inhale.model.TimerData;
+import com.agafonova.inhale.ui.LengthActivity;
 import com.crashlytics.android.Crashlytics;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
@@ -114,6 +113,15 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
             @Override
             public void onClick(View v) {
                 startTimer();
+            }
+        });
+
+        //Setup the length button listener
+        mButtonLength.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), LengthActivity.class);
+                startActivity(intent);
             }
         });
     }

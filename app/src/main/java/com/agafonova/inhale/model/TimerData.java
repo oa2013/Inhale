@@ -13,6 +13,7 @@ public class TimerData implements Parcelable {
     private String mInhale;
     private String mExhale;
     private String mPause;
+    private boolean isSelected;
 
     public String getmTime() {
         return mTime;
@@ -44,6 +45,14 @@ public class TimerData implements Parcelable {
 
     public void setmPause(String mPause) {
         this.mPause = mPause;
+    }
+
+    public boolean getSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 
     public TimerData() {

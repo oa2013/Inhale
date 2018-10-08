@@ -6,4 +6,17 @@
     <string name="button_length">Length</string>
     <string name="button_stopStart">Start</string>
     <string name="placeholder">"00:00:00"</string>
+    <string name="exhalation">Exhalation</string>
+    <string name="inhalation">Inhalation</string>
+    <string name="exhale_4">"4 seconds"</string>
+    <string name="exhale_6">"6 seconds"</string>
+    <string name="exhale_8">"8 seconds"</string>
+    <string name="exhale_10">"10 seconds"</string>
+    <string name="exhale_12">"12 seconds"</string>
+    <string name="inhale_2">"2 seconds"</string>
+    <string name="inhale_3">"3 seconds"</string>
+    <string name="inhale_4">"4 seconds"</string>
+    <string name="inhale_5">"5 seconds"</string>
+    <string name="inhale_6">"6 seconds"</string>
+    <string name="important">Important: do not exceed your comfort level.</string>
 </resources>

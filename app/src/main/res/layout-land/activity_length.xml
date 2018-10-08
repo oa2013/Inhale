@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/celestial_gradient"
+    tools:context="com.agafonova.inhale.ui.LengthActivity">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_length"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/rv_length_height_landscape"
+        android:layout_marginBottom="@dimen/standard_margin"
+        android:layout_marginEnd="@dimen/smaller_margin"
+        android:layout_marginStart="@dimen/smaller_margin"
+        android:layout_marginTop="@dimen/big_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_inhalation_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/standard_margin"
+        android:layout_marginEnd="@dimen/smaller_margin"
+        android:text="@string/inhalation"
+        android:textColor="@color/white"
+        android:textSize="@dimen/timer_textSize"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_length_horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline_length_vertical" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline_length_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <TextView
+        android:id="@+id/tv_important"
+        style="@style/Base.TextAppearance.AppCompat.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/smaller_margin"
+        android:layout_marginEnd="@dimen/smaller_margin"
+        android:layout_marginStart="@dimen/smaller_margin"
+        android:layout_marginTop="@dimen/smaller_margin"
+        android:text="@string/important"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rv_length" />
+
+    <TextView
+        android:id="@+id/tv_exhalation_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/standard_margin"
+        android:layout_marginStart="@dimen/smaller_margin"
+        android:text="@string/exhalation"
+        android:textColor="@color/white"
+        android:textSize="@dimen/timer_textSize"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_length_horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_length_vertical"
+        app:layout_constraintHorizontal_bias="0.350"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline_length_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.27" />
+
+</android.support.constraint.ConstraintLayout>

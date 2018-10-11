@@ -5,12 +5,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+
 import com.agafonova.inhale.R;
 import com.agafonova.inhale.adapters.TimerDataAdapter;
 import com.agafonova.inhale.model.TimerData;
 import com.crashlytics.android.Crashlytics;
+
 import java.util.ArrayList;
-import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
@@ -19,7 +21,7 @@ public class LengthActivity extends AppCompatActivity implements TimerDataAdapte
 
     private static final String TAG = LengthActivity.class.getName();
     private TimerDataAdapter mAdapter;
-    private List<TimerData> mExerciseData;
+    private ArrayList<TimerData> mExerciseData;
 
     @BindView(R.id.rv_length)
     RecyclerView mRecyclerView;
@@ -40,15 +42,16 @@ public class LengthActivity extends AppCompatActivity implements TimerDataAdapte
                 .build();
         Fabric.with(fabric);
 
+        GridLayoutManager layoutManager = new GridLayoutManager(LengthActivity.this, 1, GridLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+
         loadExerciseData();
     }
 
     public void loadExerciseData() {
 
         try{
-            GridLayoutManager layoutManager = new GridLayoutManager(LengthActivity.this, 1, GridLayoutManager.VERTICAL, false);
-            mRecyclerView.setLayoutManager(layoutManager);
-            mRecyclerView.setHasFixedSize(true);
             mAdapter = new TimerDataAdapter(this,this);
             mRecyclerView.setAdapter(mAdapter);
 
@@ -90,56 +93,18 @@ public class LengthActivity extends AppCompatActivity implements TimerDataAdapte
 
     @Override
     public void onExerciseClick(TimerData selectedTimerData) {
-
-        //
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        try{
-            loadExerciseData();
-        }
-        catch(Exception e) {
-            Crashlytics.log(Log.VERBOSE, TAG, e.toString());
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        try{
-        }
-        catch(Exception e) {
-            Crashlytics.log(Log.VERBOSE, TAG, e.toString());
-        }
+        Log.d(TAG, selectedTimerData.getmExhale() + selectedTimerData.getmInhale());
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList("exerciseData", mExerciseData);
         super.onSaveInstanceState(outState);
-
-        try{
-        }
-        catch(Exception e) {
-            Crashlytics.log(Log.VERBOSE, TAG, e.toString());
-        }
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-
-        try{
-            loadExerciseData();
-        }
-        catch(Exception e) {
-            Crashlytics.log(Log.VERBOSE, TAG, e.toString());
-        }
+        mExerciseData = savedInstanceState.getParcelableArrayList("exerciseData");
     }
-
-
 }

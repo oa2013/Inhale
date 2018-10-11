@@ -1,6 +1,8 @@
 package com.agafonova.inhale;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -12,12 +14,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.agafonova.inhale.model.TimerData;
 import com.agafonova.inhale.ui.LengthActivity;
 import com.crashlytics.android.Crashlytics;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
@@ -27,6 +32,9 @@ import io.github.krtkush.lineartimer.LinearTimerView;
 public class MainActivity extends AppCompatActivity implements LinearTimer.TimerListener  {
 
     private static final String TAG = MainActivity.class.getName();
+    private static final String LAST_ID = "LAST_ID";
+    private static final String APP_NAME = "Inhale";
+
     private static final int ENTER_FADE_DURATION = 100;
     private static final int EXIT_FADE_DURATION = 3000;
     private static final String TIME_FORMAT = "HH:mm:ss";
@@ -101,12 +109,14 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         if(savedInstanceState == null)
         {
             mTimerData = new TimerData();
-            mTimerData.setmTime("00:00:00");
+            mTimerData.setTime("00:00:00");
         }
         else {
             mTimerData = savedInstanceState.getParcelable(TIMER_DATA_KEY);
-            mTime.setText(mTimerData.getmTime());
+            mTime.setText(mTimerData.getTime());
         }
+
+        getExerciseID();
 
         //Setup start/stop button listener
         mButtonStopStart.setOnClickListener(new View.OnClickListener() {
@@ -124,6 +134,17 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
                 startActivity(intent);
             }
         });
+    }
+
+    private void getExerciseID() {
+        SharedPreferences sharedPreferences = getApplicationContext().
+                getSharedPreferences(APP_NAME, Context.MODE_PRIVATE);
+
+        String exerciseID = sharedPreferences.getString(LAST_ID,"");
+
+        if(exerciseID != null && !exerciseID.contains("")) {
+            Log.d(TAG, "exerciseID: " + exerciseID);
+        }
     }
 
     private void startTimer() {
@@ -184,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         if (animationDrawable != null && !animationDrawable.isRunning()) {
             animationDrawable.start();
         }
-
+        getExerciseID();
     }
 
     @Override
@@ -212,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         Date date = new Date(tickUpdateInMillis);
 
         mTime.setText(dateFormat.format(date));
-        mTimerData.setmTime(dateFormat.format(date));
+        mTimerData.setTime(dateFormat.format(date));
     }
 
     @Override
@@ -229,6 +250,7 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         mTimerData = savedInstanceState.getParcelable(TIMER_DATA_KEY);
+        getExerciseID();
     }
 
 }

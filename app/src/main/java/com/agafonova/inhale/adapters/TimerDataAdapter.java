@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.agafonova.inhale.R;
 import com.agafonova.inhale.model.TimerData;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Olga Agafonova on 10/7/18.
@@ -23,7 +24,7 @@ public class TimerDataAdapter extends RecyclerView.Adapter<TimerDataAdapter.Time
     private int lastSelectedPosition = -1;
 
     public interface ExerciseClickListener {
-        void onExerciseClick(TimerData selectedTimerData);
+        void onExerciseClick(TimerData selectedTimerData) throws ExecutionException, InterruptedException;
     }
 
     public TimerDataAdapter(Context iContext, TimerDataAdapter.ExerciseClickListener listener) {
@@ -46,8 +47,8 @@ public class TimerDataAdapter extends RecyclerView.Adapter<TimerDataAdapter.Time
         final TimerData someData = mTimerDataList.get(position);
 
         try {
-            holder.textViewExhale.setText(someData.getmExhale());
-            holder.textViewInhale.setText(someData.getmInhale());
+            holder.textViewExhale.setText(someData.getExhale());
+            holder.textViewInhale.setText(someData.getInhale());
             holder.radioButton.setChecked(lastSelectedPosition == position);
         }
         catch (Exception e) {
@@ -95,7 +96,14 @@ public class TimerDataAdapter extends RecyclerView.Adapter<TimerDataAdapter.Time
         public void onClick(View view) {
             int clickedPosition = getAdapterPosition();
             TimerData selectedData = mTimerDataList.get(clickedPosition);
-            mOnClickListener.onExerciseClick(selectedData);
+
+            try {
+                mOnClickListener.onExerciseClick(selectedData);
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

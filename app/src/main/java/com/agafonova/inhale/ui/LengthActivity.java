@@ -1,5 +1,8 @@
 package com.agafonova.inhale.ui;
 
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,9 +12,11 @@ import android.util.Log;
 import com.agafonova.inhale.R;
 import com.agafonova.inhale.adapters.TimerDataAdapter;
 import com.agafonova.inhale.model.TimerData;
+import com.agafonova.inhale.viewmodel.TimerDataViewModel;
 import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,8 +25,12 @@ import io.fabric.sdk.android.Fabric;
 public class LengthActivity extends AppCompatActivity implements TimerDataAdapter.ExerciseClickListener {
 
     private static final String TAG = LengthActivity.class.getName();
+    private static final String LAST_ID = "LAST_ID";
+    private static final String APP_NAME = "Inhale";
+
     private TimerDataAdapter mAdapter;
     private ArrayList<TimerData> mExerciseData;
+    private TimerDataViewModel mTimerDataViewModel;
 
     @BindView(R.id.rv_length)
     RecyclerView mRecyclerView;
@@ -56,24 +65,24 @@ public class LengthActivity extends AppCompatActivity implements TimerDataAdapte
             mRecyclerView.setAdapter(mAdapter);
 
             TimerData itemOne = new TimerData();
-            itemOne.setmExhale(getString(R.string.exhale_4));
-            itemOne.setmInhale(getString(R.string.inhale_2));
+            itemOne.setExhale(getString(R.string.exhale_4));
+            itemOne.setInhale(getString(R.string.inhale_2));
 
             TimerData itemTwo = new TimerData();
-            itemTwo.setmExhale(getString(R.string.exhale_6));
-            itemTwo.setmInhale(getString(R.string.inhale_3));
+            itemTwo.setExhale(getString(R.string.exhale_6));
+            itemTwo.setInhale(getString(R.string.inhale_3));
 
             TimerData itemThree = new TimerData();
-            itemThree.setmExhale(getString(R.string.exhale_8));
-            itemThree.setmInhale(getString(R.string.inhale_4));
+            itemThree.setExhale(getString(R.string.exhale_8));
+            itemThree.setInhale(getString(R.string.inhale_4));
 
             TimerData itemFour = new TimerData();
-            itemFour.setmExhale(getString(R.string.exhale_10));
-            itemFour.setmInhale(getString(R.string.inhale_5));
+            itemFour.setExhale(getString(R.string.exhale_10));
+            itemFour.setInhale(getString(R.string.inhale_5));
 
             TimerData itemFive = new TimerData();
-            itemFive.setmExhale(getString(R.string.exhale_12));
-            itemFive.setmInhale(getString(R.string.inhale_6));
+            itemFive.setExhale(getString(R.string.exhale_12));
+            itemFive.setInhale(getString(R.string.inhale_6));
 
             mExerciseData = new ArrayList<TimerData>();
 
@@ -91,9 +100,20 @@ public class LengthActivity extends AppCompatActivity implements TimerDataAdapte
         }
     }
 
+    /*
+    * Save selected exercise data to Room DB
+    * */
     @Override
-    public void onExerciseClick(TimerData selectedTimerData) {
-        Log.d(TAG, selectedTimerData.getmExhale() + selectedTimerData.getmInhale());
+    public void onExerciseClick(TimerData selectedTimerData) throws ExecutionException, InterruptedException {
+        mTimerDataViewModel = ViewModelProviders.of(this).get(TimerDataViewModel.class);
+
+        long id = mTimerDataViewModel.insert(selectedTimerData);
+
+        SharedPreferences sharedPreferences = getApplicationContext().
+                getSharedPreferences(APP_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(LAST_ID, Long.toString(id));
+        editor.commit();
     }
 
     @Override

@@ -18,6 +18,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,7 +31,11 @@
             android:name="io.fabric.ApiKey"
             android:value="062e0e9b4e62cea28bfc519278f857414432be21" />
 
-        <activity android:name=".ui.LengthActivity"></activity>
+        <activity
+            android:name=".ui.LengthActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity" >
+            ></activity>
     </application>
 
 </manifest>

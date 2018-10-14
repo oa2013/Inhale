@@ -8,13 +8,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+
 import com.agafonova.inhale.R;
 import com.agafonova.inhale.adapters.TimerDataAdapter;
 import com.agafonova.inhale.model.TimerData;
 import com.agafonova.inhale.viewmodel.TimerDataViewModel;
 import com.crashlytics.android.Crashlytics;
+
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
@@ -51,6 +54,8 @@ public class LengthActivity extends AppCompatActivity implements TimerDataAdapte
         GridLayoutManager layoutManager = new GridLayoutManager(LengthActivity.this, 1, GridLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         loadExerciseData();
     }

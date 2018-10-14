@@ -17,15 +17,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.agafonova.inhale.model.TimerData;
 import com.agafonova.inhale.ui.LengthActivity;
 import com.agafonova.inhale.viewmodel.TimerDataViewModel;
 import com.crashlytics.android.Crashlytics;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
@@ -54,6 +59,10 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     private TimerDataViewModel mTimerDataViewModel;
     private List<TimerData> mSavedExerciseData;
     private String mExerciseID;
+
+    private int mNumberExhales = 0;
+    private int mNumberInhales = 0;
+    private String mExerciseString = "No exercise mode set";
 
     @BindView(R.id.time)
     TextView mTime;
@@ -100,30 +109,39 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         //Set start/stop button text
         mButtonStopStart.setText(START);
 
-        //Get exercise ID and set exercise mode
+        //Get exercise ID
         mTimerDataViewModel = ViewModelProviders.of(this).get(TimerDataViewModel.class);
+        setExerciseID();
 
-        SharedPreferences sharedPreferences = getApplicationContext().
-                getSharedPreferences(APP_NAME, Context.MODE_PRIVATE);
-
-        mExerciseID = sharedPreferences.getString(LAST_ID,"");
-
-        if(mExerciseID.contains("")) {
-            String defaultMode = getString(R.string.exhale_4) + " : " + getString(R.string.inhale_2);
-            mExerciseMode.setText(defaultMode);
-        }
-
+        //Get timer data
         mTimerDataViewModel.getExerciseData().observe(this, new Observer<List<TimerData>>() {
             @Override
             public void onChanged(@Nullable final List<TimerData> items) {
 
-                for(TimerData item : items)
-                {
-                    //If the IDs match, then set the exercise mode
-                    if(item.getId() == Integer.parseInt(mExerciseID)) {
+                for (TimerData item : items) {
 
-                        String exerciseMode = item.getExhale() + " : " + item.getInhale();
-                        mExerciseMode.setText(exerciseMode);
+                    //If the IDs match, then set the exercise mode
+                    if (item.getId() == Integer.parseInt(mExerciseID)) {
+
+                        mNumberExhales = extractInteger(item.getExhale());
+                        mNumberInhales = extractInteger(item.getInhale());
+
+                        mTotalSeconds = (mNumberExhales + mNumberInhales)*1000;
+                        Log.d("HELLO loop sec", String.valueOf(mTotalSeconds));
+
+                        mExerciseString = String.valueOf(mNumberExhales) + " : " + String.valueOf(mNumberInhales);
+                        mExerciseMode.setText(mExerciseString);
+
+                        //Setup timer
+                        LinearTimerView linearTimerView = findViewById(R.id.linearTimer);
+                        mTimerCounter = 0;
+
+                        mTimer = new LinearTimer.Builder()
+                                .linearTimerView(linearTimerView)
+                                .duration(mTotalSeconds)
+                                .timerListener(MainActivity.this)
+                                .getCountUpdate(LinearTimer.COUNT_UP_TIMER, 1000)
+                                .build();
                     }
                 }
 
@@ -132,17 +150,26 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
             }
         });
 
-        //Setup the timer
-        LinearTimerView linearTimerView = findViewById(R.id.linearTimer);
-        mTotalSeconds = mTotalSeconds*1000;
-        mTimerCounter = 0;
+        //Set default exercise mode and timer
+        if(mExerciseID.isEmpty()) {
+            mNumberInhales = extractInteger(getString(R.string.exhale_4));
+            mNumberExhales = extractInteger(getString(R.string.inhale_2));
 
-        mTimer = new LinearTimer.Builder()
-                .linearTimerView(linearTimerView)
-                .duration(mTotalSeconds)
-                .timerListener(this)
-                .getCountUpdate(LinearTimer.COUNT_UP_TIMER, 1000)
-                .build();
+            mExerciseString = getString(R.string.exhale_4) + " : " + getString(R.string.inhale_2);
+            mExerciseMode.setText(mExerciseString);
+
+            mTotalSeconds = (mNumberExhales + mNumberInhales)*1000;
+
+            LinearTimerView linearTimerView = findViewById(R.id.linearTimer);
+            mTimerCounter = 0;
+
+            mTimer = new LinearTimer.Builder()
+                    .linearTimerView(linearTimerView)
+                    .duration(mTotalSeconds)
+                    .timerListener(MainActivity.this)
+                    .getCountUpdate(LinearTimer.COUNT_UP_TIMER, 1000)
+                    .build();
+        }
 
         if(savedInstanceState == null)
         {
@@ -172,14 +199,25 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         });
     }
 
+    private int extractInteger(String input) {
+        Pattern p = Pattern.compile("[0-9]+");
+        Matcher m = p.matcher(input);
+        int result = 0;
+
+        while (m.find()) {
+            result = Integer.parseInt(m.group());
+        }
+
+        return result;
+    }
+
     private void setExerciseID() {
 
         SharedPreferences sharedPreferences = getApplicationContext().
                 getSharedPreferences(APP_NAME, Context.MODE_PRIVATE);
 
         mExerciseID = sharedPreferences.getString(LAST_ID,"");
-
-        Log.d("HELLO", "setExerciseID: " + mExerciseID);
+        Log.d("HELLO exercise ID", mExerciseID);
     }
 
     private void startTimer() {
@@ -263,6 +301,13 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
             mTimerCounter = 2;
         }
 
+        if(tickUpdateInMillis <= (mNumberExhales * 1000)) {
+            mBreathingInstructions.setText(R.string.exhale);
+        }
+        else {
+            mBreathingInstructions.setText(R.string.inhale);
+        }
+
         SimpleDateFormat dateFormat = new SimpleDateFormat(TIME_FORMAT);
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         Date date = new Date(tickUpdateInMillis);
@@ -285,8 +330,6 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         mTimerData = savedInstanceState.getParcelable(TIMER_DATA_KEY);
-
         setExerciseID();
     }
-
 }

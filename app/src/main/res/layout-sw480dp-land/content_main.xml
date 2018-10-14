@@ -23,7 +23,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:padding="4dp"
-            android:text="@string/breathing_instructions"
+            android:text="@string/breathe"
             android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="@dimen/tv_breathing_textSize"

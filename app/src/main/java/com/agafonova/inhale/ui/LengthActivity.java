@@ -116,8 +116,6 @@ public class LengthActivity extends AppCompatActivity implements TimerDataAdapte
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(LAST_ID, Long.toString(id));
         editor.commit();
-
-        Log.d("HELLO", "onExerciseClick: " + id);
     }
 
     @Override

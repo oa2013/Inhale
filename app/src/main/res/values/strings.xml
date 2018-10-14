@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Inhale</string>
     <string name="action_settings">Settings</string>
-    <string name="breathing_instructions">Inhale</string>
+    <string name="inhale">Inhale</string>
+    <string name="exhale">Exhale</string>
+    <string name="breathe">Breathe normally</string>
     <string name="tv_exercisemode_text">"4 seconds : 2 seconds"</string>
     <string name="button_length">Length</string>
     <string name="button_stopStart">Start</string>

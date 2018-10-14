@@ -6,14 +6,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
-import android.widget.TextView;
+
 import com.agafonova.inhale.R;
 import com.agafonova.inhale.model.TimerData;
+
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
- * Created by Olga Agafonova on 10/7/18.
+ * Updated by Olga Agafonova on 10/13/18.
+ *
+ * Based on http://joshskeen.com/building-a-radiogroup-recyclerview/
  */
 
 public class TimerDataAdapter extends RecyclerView.Adapter<TimerDataAdapter.TimerDataAdapterViewHolder> {
@@ -21,7 +24,7 @@ public class TimerDataAdapter extends RecyclerView.Adapter<TimerDataAdapter.Time
     private List<TimerData> mTimerDataList;
     private TimerDataAdapter.ExerciseClickListener mOnClickListener;
     private Context mContext;
-    private int lastSelectedPosition = -1;
+    public int mSelectedItem = -1;
 
     public interface ExerciseClickListener {
         void onExerciseClick(TimerData selectedTimerData) throws ExecutionException, InterruptedException;
@@ -44,12 +47,12 @@ public class TimerDataAdapter extends RecyclerView.Adapter<TimerDataAdapter.Time
     @Override
     public void onBindViewHolder(final TimerDataAdapter.TimerDataAdapterViewHolder holder, int position) {
 
-        final TimerData someData = mTimerDataList.get(position);
-
         try {
-            holder.textViewExhale.setText(someData.getExhale());
-            holder.textViewInhale.setText(someData.getInhale());
-            holder.radioButton.setChecked(lastSelectedPosition == position);
+            final TimerData someData = mTimerDataList.get(position);
+
+            holder.radioButton.setChecked(position == mSelectedItem);
+            holder.radioButton.setText(someData.getExhale()+ " : " + someData.getInhale());
+            holder.radioButton.setTextColor(mContext.getColor(R.color.white));
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -72,30 +75,22 @@ public class TimerDataAdapter extends RecyclerView.Adapter<TimerDataAdapter.Time
     public class TimerDataAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private RadioButton radioButton;
-        private TextView textViewExhale;
-        private TextView textViewInhale;
 
         public TimerDataAdapterViewHolder(View itemView) {
             super(itemView);
-            radioButton = itemView.findViewById(R.id.radio_length);
-            textViewExhale = itemView.findViewById(R.id.tv_length_exhale);
-            textViewInhale = itemView.findViewById(R.id.tv_length_inhale);
 
-            radioButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    lastSelectedPosition = getAdapterPosition();
-                    notifyDataSetChanged();
-            }
-            });
-
+            radioButton = itemView.findViewById(R.id.radio_button);
+            radioButton.setOnClickListener(this);
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            int clickedPosition = getAdapterPosition();
-            TimerData selectedData = mTimerDataList.get(clickedPosition);
+
+            mSelectedItem = getAdapterPosition();
+            notifyDataSetChanged();
+
+            TimerData selectedData = mTimerDataList.get(mSelectedItem);
 
             try {
                 mOnClickListener.onExerciseClick(selectedData);

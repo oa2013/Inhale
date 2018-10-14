@@ -7,46 +7,16 @@
     android:layout_height="wrap_content">
 
     <RadioButton
-        android:id="@+id/radio_length"
+        android:id="@+id/radio_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:buttonTint="@color/white"
         android:layout_marginBottom="@dimen/smaller_margin"
         android:layout_marginStart="8dp"
         android:layout_marginTop="@dimen/smaller_margin"
-        android:buttonTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/tv_length_exhale"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/smaller_margin"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="@dimen/smaller_margin"
-        android:text="@string/placeholder"
-        android:textColor="@color/white"
-        android:textSize="@dimen/rv_text_size"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/tv_length_inhale"
-        app:layout_constraintStart_toEndOf="@+id/radio_length"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <TextView
-        android:id="@+id/tv_length_inhale"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/smaller_margin"
-        android:layout_marginEnd="@dimen/rv_margin"
-        android:layout_marginTop="@dimen/smaller_margin"
-        android:text="@string/placeholder"
-        android:textColor="@color/white"
-        android:textSize="@dimen/rv_text_size"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintVertical_bias="0.0"/>
 
 </android.support.constraint.ConstraintLayout>

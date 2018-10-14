@@ -1,10 +1,13 @@
 package com.agafonova.inhale;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,15 +17,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.agafonova.inhale.model.TimerData;
 import com.agafonova.inhale.ui.LengthActivity;
+import com.agafonova.inhale.viewmodel.TimerDataViewModel;
 import com.crashlytics.android.Crashlytics;
-
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
@@ -48,6 +51,9 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     private int mTimerCounter;
     private LinearTimer mTimer;
     private TimerData mTimerData;
+    private TimerDataViewModel mTimerDataViewModel;
+    private List<TimerData> mSavedExerciseData;
+    private String mExerciseID;
 
     @BindView(R.id.time)
     TextView mTime;
@@ -94,6 +100,38 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         //Set start/stop button text
         mButtonStopStart.setText(START);
 
+        //Get exercise ID and set exercise mode
+        mTimerDataViewModel = ViewModelProviders.of(this).get(TimerDataViewModel.class);
+
+        SharedPreferences sharedPreferences = getApplicationContext().
+                getSharedPreferences(APP_NAME, Context.MODE_PRIVATE);
+
+        mExerciseID = sharedPreferences.getString(LAST_ID,"");
+
+        if(mExerciseID.contains("")) {
+            String defaultMode = getString(R.string.exhale_4) + " : " + getString(R.string.inhale_2);
+            mExerciseMode.setText(defaultMode);
+        }
+
+        mTimerDataViewModel.getExerciseData().observe(this, new Observer<List<TimerData>>() {
+            @Override
+            public void onChanged(@Nullable final List<TimerData> items) {
+
+                for(TimerData item : items)
+                {
+                    //If the IDs match, then set the exercise mode
+                    if(item.getId() == Integer.parseInt(mExerciseID)) {
+
+                        String exerciseMode = item.getExhale() + " : " + item.getInhale();
+                        mExerciseMode.setText(exerciseMode);
+                    }
+                }
+
+                mSavedExerciseData = new ArrayList<TimerData>();
+                mSavedExerciseData.addAll(items);
+            }
+        });
+
         //Setup the timer
         LinearTimerView linearTimerView = findViewById(R.id.linearTimer);
         mTotalSeconds = mTotalSeconds*1000;
@@ -116,8 +154,6 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
             mTime.setText(mTimerData.getTime());
         }
 
-        getExerciseID();
-
         //Setup start/stop button listener
         mButtonStopStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,15 +172,14 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         });
     }
 
-    private void getExerciseID() {
+    private void setExerciseID() {
+
         SharedPreferences sharedPreferences = getApplicationContext().
                 getSharedPreferences(APP_NAME, Context.MODE_PRIVATE);
 
-        String exerciseID = sharedPreferences.getString(LAST_ID,"");
+        mExerciseID = sharedPreferences.getString(LAST_ID,"");
 
-        if(exerciseID != null && !exerciseID.contains("")) {
-            Log.d(TAG, "exerciseID: " + exerciseID);
-        }
+        Log.d("HELLO", "setExerciseID: " + mExerciseID);
     }
 
     private void startTimer() {
@@ -205,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         if (animationDrawable != null && !animationDrawable.isRunning()) {
             animationDrawable.start();
         }
-        getExerciseID();
+        setExerciseID();
     }
 
     @Override
@@ -250,7 +285,8 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         mTimerData = savedInstanceState.getParcelable(TIMER_DATA_KEY);
-        getExerciseID();
+
+        setExerciseID();
     }
 
 }

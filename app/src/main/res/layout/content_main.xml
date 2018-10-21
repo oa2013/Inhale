@@ -85,6 +85,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_breathing_instructions" />
 
+        <com.google.android.exoplayer2.ui.PlayerView
+            android:id="@+id/audio_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/audio_player_height"
+            android:layout_marginEnd="@dimen/standard_margin"
+            android:layout_marginStart="@dimen/standard_margin"
+            android:layout_marginTop="@dimen/standard_margin"
+            android:layout_marginBottom="@dimen/standard_margin"
+            app:layout_constraintBottom_toTopOf="@+id/button_length"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearTimer" />
+
         <Button
             android:id="@+id/button_length"
             android:layout_width="wrap_content"

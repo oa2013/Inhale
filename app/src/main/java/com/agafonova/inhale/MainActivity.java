@@ -1,11 +1,13 @@
 package com.agafonova.inhale;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -22,6 +24,17 @@ import com.agafonova.inhale.model.TimerData;
 import com.agafonova.inhale.ui.LengthActivity;
 import com.agafonova.inhale.viewmodel.TimerDataViewModel;
 import com.crashlytics.android.Crashlytics;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DataSpec;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.upstream.RawResourceDataSource;
+import com.google.android.exoplayer2.util.Util;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,9 +72,14 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     private TimerDataViewModel mTimerDataViewModel;
     private List<TimerData> mSavedExerciseData;
     private String mExerciseID;
+    private ExoPlayer mPlayer;
 
     private int mNumberExhales = 0;
     private int mNumberInhales = 0;
+    private boolean playWhenReady = true;
+    private int currentWindow = 0;
+    private long playbackPosition = 0;
+
     private String mExerciseString = "No exercise mode set";
 
     @BindView(R.id.time)
@@ -81,6 +99,9 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
 
     @BindView(R.id.tv_breathing_instructions)
     TextView mBreathingInstructions;
+
+    @BindView(R.id.audio_view)
+    PlayerView mPlayerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,6 +218,48 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
                 startActivity(intent);
             }
         });
+
+        initializePlayer();
+    }
+
+    private void initializePlayer() {
+//        mPlayer = ExoPlayerFactory.newSimpleInstance(
+//                new DefaultRenderersFactory(this),
+//                new DefaultTrackSelector(), new DefaultLoadControl());
+//
+//        mPlayerView.setPlayer(mPlayer);
+//        mPlayer.setPlayWhenReady(playWhenReady);
+//        mPlayer.seekTo(currentWindow, playbackPosition);
+
+        mPlayer = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector());
+        mPlayerView.setPlayer(mPlayer);
+
+        final RawResourceDataSource rawResourceDataSource = new RawResourceDataSource(this);
+        DataSpec dataSpec = new DataSpec(RawResourceDataSource.buildRawResourceUri(R.raw.snowburn));
+
+        try {
+            rawResourceDataSource.open(dataSpec);
+
+            DataSource.Factory factory = new DataSource.Factory() {
+                @Override
+                public DataSource createDataSource() {
+                    return rawResourceDataSource;
+                }
+            };
+            MediaSource audioSource = new ExtractorMediaSource.Factory(factory).createMediaSource(rawResourceDataSource.getUri());
+            mPlayer.prepare(audioSource);
+            mPlayer.setPlayWhenReady(playWhenReady);
+            mPlayer.seekTo(currentWindow, playbackPosition);
+
+        } catch (RawResourceDataSource.RawResourceDataSourceException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private MediaSource buildMediaSource(Uri uri) {
+        return new ExtractorMediaSource.Factory(
+                new DefaultHttpDataSourceFactory("exoplayer-codelab")).
+                createMediaSource(uri);
     }
 
     private int extractInteger(String input) {
@@ -273,8 +336,30 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        if (Util.SDK_INT > 23) {
+            initializePlayer();
+        }
+    }
+
+    @SuppressLint("InlinedApi")
+    private void hideSystemUi() {
+        mPlayerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        hideSystemUi();
+        if ((Util.SDK_INT <= 23 || mPlayer == null)) {
+            initializePlayer();
+        }
         if (animationDrawable != null && !animationDrawable.isRunning()) {
             animationDrawable.start();
         }
@@ -284,8 +369,29 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     @Override
     protected void onPause() {
         super.onPause();
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
         if (animationDrawable != null && animationDrawable.isRunning()) {
             animationDrawable.stop();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+        }
+    }
+
+    private void releasePlayer() {
+        if (mPlayer != null) {
+            playbackPosition = mPlayer.getCurrentPosition();
+            currentWindow = mPlayer.getCurrentWindowIndex();
+            playWhenReady = mPlayer.getPlayWhenReady();
+            mPlayer.release();
+            mPlayer = null;
         }
     }
 

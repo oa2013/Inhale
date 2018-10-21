@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.agafonova.inhale.model.TimerData;
+import com.agafonova.inhale.ui.AboutActivity;
 import com.agafonova.inhale.ui.LengthActivity;
 import com.agafonova.inhale.viewmodel.TimerDataViewModel;
 import com.crashlytics.android.Crashlytics;
@@ -223,14 +224,6 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     }
 
     private void initializePlayer() {
-//        mPlayer = ExoPlayerFactory.newSimpleInstance(
-//                new DefaultRenderersFactory(this),
-//                new DefaultTrackSelector(), new DefaultLoadControl());
-//
-//        mPlayerView.setPlayer(mPlayer);
-//        mPlayer.setPlayWhenReady(playWhenReady);
-//        mPlayer.seekTo(currentWindow, playbackPosition);
-
         mPlayer = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector());
         mPlayerView.setPlayer(mPlayer);
 
@@ -328,7 +321,9 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.about) {
+            Intent intent = new Intent(this, AboutActivity.class);
+            startActivity(intent);
             return true;
         }
 

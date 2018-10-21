@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollViewAbout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true"
+    android:paddingTop="@dimen/smaller_margin"
+    android:paddingBottom="@dimen/smaller_margin"
+    android:background="@drawable/celestial_gradient"
+    android:scrollbarStyle="outsideOverlay">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/copyright_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/smaller_margin"
+            android:layout_marginTop="@dimen/smaller_margin"
+            android:layout_marginBottom="@dimen/standard_margin"
+            android:layout_marginEnd="@dimen/smaller_margin"
+            android:text="@string/copyright_label"
+            android:textColor="@color/white"
+            android:textSize="@dimen/copyright_page_label" />
+
+        <TextView
+            android:id="@+id/copyright_notice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/smaller_margin"
+            android:layout_marginTop="@dimen/smaller_margin"
+            android:layout_marginBottom="@dimen/standard_margin"
+            android:layout_marginEnd="@dimen/smaller_margin"
+            android:text="@string/copyright_notice"
+            android:textColor="@color/white"
+            android:textSize="@dimen/timer_textSize" />
+
+        <TextView
+            android:id="@+id/music_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/smaller_margin"
+            android:layout_marginTop="@dimen/smaller_margin"
+            android:layout_marginBottom="@dimen/standard_margin"
+            android:layout_marginEnd="@dimen/smaller_margin"
+            android:text="@string/music_label"
+            android:textColor="@color/white"
+            android:textSize="@dimen/copyright_page_label" />
+
+        <TextView
+        android:id="@+id/music_notice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/smaller_margin"
+        android:layout_marginTop="@dimen/smaller_margin"
+        android:layout_marginBottom="@dimen/standard_margin"
+        android:layout_marginEnd="@dimen/smaller_margin"
+        android:text="@string/music_notice"
+        android:textColor="@color/white"
+        android:textSize="@dimen/timer_textSize" />
+
+        <TextView
+            android:id="@+id/disclaimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/smaller_margin"
+            android:layout_marginTop="@dimen/smaller_margin"
+            android:layout_marginBottom="@dimen/standard_margin"
+            android:layout_marginEnd="@dimen/smaller_margin"
+            android:text="@string/disclaimer"
+            android:textColor="@color/white"
+            android:textSize="@dimen/copyright_page_label" />
+
+        <TextView
+            android:id="@+id/disclaimer_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/smaller_margin"
+            android:layout_marginTop="@dimen/smaller_margin"
+            android:layout_marginBottom="@dimen/standard_margin"
+            android:layout_marginEnd="@dimen/smaller_margin"
+            android:text="@string/disclaimer_text"
+            android:textColor="@color/white"
+            android:textSize="@dimen/timer_textSize" />
+
+        <TextView
+            android:id="@+id/fitness_disclaimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/smaller_margin"
+            android:layout_marginTop="@dimen/smaller_margin"
+            android:layout_marginBottom="@dimen/standard_margin"
+            android:layout_marginEnd="@dimen/smaller_margin"
+            android:text="@string/fitness_disclaimer"
+            android:textColor="@color/white"
+            android:textSize="@dimen/copyright_page_label" />
+
+        <TextView
+            android:id="@+id/fitness_disclaimer_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/smaller_margin"
+            android:layout_marginTop="@dimen/smaller_margin"
+            android:layout_marginBottom="@dimen/standard_margin"
+            android:layout_marginEnd="@dimen/smaller_margin"
+            android:text="@string/fitness_disclaimer_text"
+            android:textColor="@color/white"
+            android:textSize="@dimen/timer_textSize" />
+
+    </LinearLayout>
+
+</ScrollView>

@@ -1,3 +1,7 @@
+<!--
+  ~ Copyright (c) 2018, Olga Agafonova. All Rights Reserved.
+  -->
+
 <resources>
     <string name="app_name">Inhale</string>
     <string name="action_settings">Settings</string>
@@ -20,4 +24,32 @@
     <string name="inhale_5">"5 seconds"</string>
     <string name="inhale_6">"6 seconds"</string>
     <string name="important">Important: do not exceed your comfort level.</string>
+    <string name="about">About</string>
+    <string name="copyright_label">Copyright Notice</string>
+    <string name="copyright_notice">Copyright (c) 2018, Olga Agafonova. All rights reserved.</string>
+    <string name="music_label">Music License</string>
+    <string name="music_notice">Soundtrack \"Snowburn-Instrumental\" by Hammock. Licensed through the Music Bed, LLC.</string>
+    <string name="disclaimer">Disclaimer</string>
+    <string name="fitness_disclaimer">Fitness Disclaimer</string>
+    <string name="disclaimer_text">The information contained on Inhale mobile app (the \"Service\") is
+        for general information purposes only. \n \n
+
+        Inhale assumes no responsibility for errors or omissions in the contents on the Service. \n \n
+
+        In no event shall Inhale be liable for any special, direct, indirect, consequential, or incidental
+        damages or any damages whatsoever, whether in an action of contract, negligence or other tort,
+        arising out of or in connection with the use of the Service or the contents of the Service.
+        Inhale reserves the right to make additions, deletions, or modification to the contents on
+        the Service at any time without prior notice.
+    </string>
+    <string name="fitness_disclaimer_text">The Service offers health, fitness and nutritional information
+        and is designed for educational purposes only. You should not rely on this information
+        as a substitute for, nor does it replace, professional medical advice, diagnosis, or treatment.
+        If you have any concerns or questions about your health, you should always consult with a
+        physician or other health-care professional. \n \n
+
+        Do not disregard, avoid or delay obtaining medical or health related advice from
+        your health-care professional because of something you may have read on the Service.
+        The use of any information provided on the Service is solely at your own risk.
+    </string>
 </resources>

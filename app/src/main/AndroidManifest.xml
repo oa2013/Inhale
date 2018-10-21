@@ -34,8 +34,14 @@
         <activity
             android:name=".ui.LengthActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity" >
-            ></activity>
+            android:parentActivityName=".MainActivity">
+            >
+        </activity>
+
+        <activity android:name=".ui.AboutActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -2,10 +2,8 @@ package com.agafonova.inhale.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-
 import com.agafonova.inhale.R;
 import com.crashlytics.android.Crashlytics;
-
 import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
 

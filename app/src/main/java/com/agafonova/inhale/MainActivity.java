@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -33,7 +32,6 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.RawResourceDataSource;
 import com.google.android.exoplayer2.util.Util;
 
@@ -64,6 +62,10 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
 
     private static final String START = "START";
     private static final String STOP = "STOP";
+    private static final String SECONDS  = "seconds";
+
+    private static final String PLAYER_POSITION = "PLAYER_POSITION";
+    private static final String PLAYER_STATUS = "PLAYER_STATUS";
 
     private AnimationDrawable animationDrawable;
     private long mTotalSeconds = 30;
@@ -75,12 +77,11 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     private String mExerciseID;
     private ExoPlayer mPlayer;
 
+    private boolean mPlayerStatus = true;
+    private long mPlayerPosition = 0;
+
     private int mNumberExhales = 0;
     private int mNumberInhales = 0;
-    private boolean playWhenReady = true;
-    private int currentWindow = 0;
-    private long playbackPosition = 0;
-
     private String mExerciseString = "No exercise mode set";
 
     @BindView(R.id.time)
@@ -149,9 +150,9 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
                         mNumberInhales = extractInteger(item.getInhale());
 
                         mTotalSeconds = (mNumberExhales + mNumberInhales)*1000;
-                        Log.d("HELLO loop sec", String.valueOf(mTotalSeconds));
 
-                        mExerciseString = String.valueOf(mNumberExhales) + " : " + String.valueOf(mNumberInhales);
+                        mExerciseString = String.valueOf(mNumberExhales) + " " + SECONDS + " : " + String.valueOf(mNumberInhales)
+                        + " " + SECONDS;
                         mExerciseMode.setText(mExerciseString);
 
                         //Setup timer
@@ -177,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
             mNumberInhales = extractInteger(getString(R.string.exhale_4));
             mNumberExhales = extractInteger(getString(R.string.inhale_2));
 
-            mExerciseString = getString(R.string.exhale_4) + " : " + getString(R.string.inhale_2);
+            mExerciseString = getString(R.string.exhale_4) + " " + SECONDS + " : " + getString(R.string.inhale_2) + " " + SECONDS;
             mExerciseMode.setText(mExerciseString);
 
             mTotalSeconds = (mNumberExhales + mNumberInhales)*1000;
@@ -221,12 +222,17 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         });
 
         initializePlayer();
+        updatePlayer();
     }
 
     private void initializePlayer() {
         mPlayer = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector());
         mPlayerView.setPlayer(mPlayer);
+        mPlayerView.setUseArtwork(false);
+        mPlayerView.setControllerShowTimeoutMs(0);
+    }
 
+    private void updatePlayer() {
         final RawResourceDataSource rawResourceDataSource = new RawResourceDataSource(this);
         DataSpec dataSpec = new DataSpec(RawResourceDataSource.buildRawResourceUri(R.raw.snowburn));
 
@@ -241,18 +247,12 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
             };
             MediaSource audioSource = new ExtractorMediaSource.Factory(factory).createMediaSource(rawResourceDataSource.getUri());
             mPlayer.prepare(audioSource);
-            mPlayer.setPlayWhenReady(playWhenReady);
-            mPlayer.seekTo(currentWindow, playbackPosition);
+            mPlayer.setPlayWhenReady(mPlayerStatus);
+            mPlayer.seekTo(mPlayerPosition);
 
         } catch (RawResourceDataSource.RawResourceDataSourceException e) {
             e.printStackTrace();
         }
-    }
-
-    private MediaSource buildMediaSource(Uri uri) {
-        return new ExtractorMediaSource.Factory(
-                new DefaultHttpDataSourceFactory("exoplayer-codelab")).
-                createMediaSource(uri);
     }
 
     private int extractInteger(String input) {
@@ -268,12 +268,10 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     }
 
     private void setExerciseID() {
-
         SharedPreferences sharedPreferences = getApplicationContext().
                 getSharedPreferences(APP_NAME, Context.MODE_PRIVATE);
 
         mExerciseID = sharedPreferences.getString(LAST_ID,"");
-        Log.d("HELLO exercise ID", mExerciseID);
     }
 
     private void startTimer() {
@@ -330,14 +328,6 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (Util.SDK_INT > 23) {
-            initializePlayer();
-        }
-    }
-
     @SuppressLint("InlinedApi")
     private void hideSystemUi() {
         mPlayerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
@@ -349,12 +339,31 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        if(mPlayer == null) {
+            initializePlayer();
+            updatePlayer();
+        }
+        else {
+            updatePlayer();
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         hideSystemUi();
+
         if ((Util.SDK_INT <= 23 || mPlayer == null)) {
             initializePlayer();
+            updatePlayer();
         }
+        else {
+            updatePlayer();
+        }
+
         if (animationDrawable != null && !animationDrawable.isRunning()) {
             animationDrawable.start();
         }
@@ -367,6 +376,10 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         if (Util.SDK_INT <= 23) {
             releasePlayer();
         }
+        else {
+            updatePlayer();
+        }
+
         if (animationDrawable != null && animationDrawable.isRunning()) {
             animationDrawable.stop();
         }
@@ -375,16 +388,12 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     @Override
     public void onStop() {
         super.onStop();
-        if (Util.SDK_INT > 23) {
-            releasePlayer();
-        }
+        releasePlayer();
     }
 
     private void releasePlayer() {
         if (mPlayer != null) {
-            playbackPosition = mPlayer.getCurrentPosition();
-            currentWindow = mPlayer.getCurrentWindowIndex();
-            playWhenReady = mPlayer.getPlayWhenReady();
+            mPlayer.stop();
             mPlayer.release();
             mPlayer = null;
         }
@@ -423,14 +432,20 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable(TIMER_DATA_KEY, mTimerData);
         super.onSaveInstanceState(outState);
+        outState.putParcelable(TIMER_DATA_KEY, mTimerData);
+        outState.putLong(PLAYER_POSITION, mPlayer.getCurrentPosition());
+        outState.putBoolean(PLAYER_STATUS, mPlayer.getPlayWhenReady());
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        mTimerData = savedInstanceState.getParcelable(TIMER_DATA_KEY);
-        setExerciseID();
+        if(savedInstanceState != null) {
+            mPlayerPosition = savedInstanceState.getLong(PLAYER_POSITION);
+            mPlayerStatus = savedInstanceState.getBoolean(PLAYER_STATUS);
+            mTimerData = savedInstanceState.getParcelable(TIMER_DATA_KEY);
+            setExerciseID();
+        }
     }
 }

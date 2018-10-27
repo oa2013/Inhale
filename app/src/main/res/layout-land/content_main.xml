@@ -93,6 +93,7 @@
             android:layout_marginStart="@dimen/standard_margin"
             android:layout_marginTop="@dimen/standard_margin"
             android:layout_marginBottom="@dimen/standard_margin"
+            app:controller_layout_id="@layout/custom_playback_control"
             app:layout_constraintBottom_toTopOf="@+id/button_length"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

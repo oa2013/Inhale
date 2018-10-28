@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         setExerciseIDAndPassDataToAppWidget();
 
         //Get timer data
+        mTimerData = new TimerData();
         mTimerDataViewModel.getExerciseData().observe(this, new Observer<List<TimerData>>() {
             @Override
             public void onChanged(@Nullable final List<TimerData> items) {

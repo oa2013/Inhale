@@ -18,6 +18,16 @@ repositories {
 
 
 android {
+
+    signingConfigs {
+        debug {
+            keyAlias 'InhaleApp'
+            keyPassword 'inhale2018'
+            storeFile file('../inhale.jks')
+            storePassword 'inhale2018'
+        }
+    }
+
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.agafonova.inhale"
@@ -27,10 +37,13 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
     }
 }

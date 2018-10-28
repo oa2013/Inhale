@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018, Olga Agafonova. All Rights Reserved.
+  -->
+<resources>
+    <string name="app_name">Inhale</string>
+    <string name="action_settings">Настройки</string>
+    <string name="inhale">Вдох</string>
+    <string name="exhale">Выдох</string>
+    <string name="breathe">Дышите нормально</string>
+    <string name="tv_exercisemode_text">4 секунды: 2 секунды</string>
+    <string name="button_length">Режим</string>
+    <string name="button_stopStart">Пуск</string>
+    <string name="exhalation_inhalation">Выдох : Вдох</string>
+    <string name="exhale_4">4 секунды</string>
+    <string name="exhale_6">6 секунд</string>
+    <string name="exhale_8">8 секунд</string>
+    <string name="exhale_10">10 секунд</string>
+    <string name="exhale_12">12 секунд</string>
+    <string name="inhale_2">2 секунды</string>
+    <string name="inhale_3">3 секунды</string>
+    <string name="inhale_4">4 секунды</string>
+    <string name="inhale_5">5 секунд</string>
+    <string name="inhale_6">6 секунд</string>
+    <string name="important">Внимание: не превышайте ваш уровень комфорта.</string>
+    <string name="about">Об Этом Приложении</string>
+    <string name="copyright_label">Уведомление об Авторских Правах</string>
+    <string name="copyright_notice">Copyright (c) 2018, Ольга Агафонова. Все права защищены.</string>
+    <string name="music_label">Музыкальная Лицензия</string>
+    <string name="music_notice">Саундтрек «Snowburn-Instrumental» группы Hammock. Лицензируется через Music Bed, LLC.</string>
+    <string name="disclaimer">"Заявление об Ограничении Ответственности "</string>
+    <string name="fitness_disclaimer">Заявление об Ограничении Ответственности за Ваше Здоровье</string>
+    <string name="disclaimer_text">Информация, содержащаяся в мобильном приложении Inhale («Сервис»), используется только для общих информационных целей. \n \n
+        Inhale не несет ответственности за ошибки или упущения в содержимом Сервиса. \n \n
+        Ни при каких обстоятельствах Inhale не несет ответственности за какие-либо особые, прямые,
+        косвенные или случайные ущербы или убытки, будь то в результате действия контракта,
+        небрежности или другого правонарушения, возникающих в связи с использованием Сервиса или содержимого Сервиса.  \n \n
+        Inhale оставляет за собой право вносить дополнения, удаления или изменения в
+        приложении в любое время без предварительного уведомления.</string>
+
+    <string name="fitness_disclaimer_text">Сервис предлагает информацию о здоровье и предназначен
+        только для образовательных целей. Эта информация не заменяет профессиональную медицинскую консультацию,
+        диагностику или лечение.  \n \n
+        Если у вас есть какие-либо проблемы или вопросы о вашем здоровье,
+        вы должны проконсультироваться у врача или другого медицинского работника. \n \n
+        Не игнорируйте, избегайте или задерживайте получение медицинских советов от
+        вашего врача из-за чего-то, что вы, возможно, прочитали в приложении Inhale. \n \n
+        Использование любой информации, предоставляемой Сервисом, осуществляется пользователем на свой страх и риск.</string>
+</resources>

@@ -10,7 +10,7 @@ import com.agafonova.inhale.model.TimerData;
  * Created by Olga Agafonova on 10/11/18.
  */
 
-@Database(entities = {TimerData.class}, version = 1)
+@Database(entities = {TimerData.class}, version = 1, exportSchema = false)
 public abstract class ExerciseRoomDB extends RoomDatabase {
 
     private static ExerciseRoomDB INSTANCE;

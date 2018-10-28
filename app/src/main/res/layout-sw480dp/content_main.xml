@@ -125,7 +125,7 @@
             android:layout_weight="1.0"
             android:backgroundTint="@color/white"
             android:padding="@dimen/button_padding"
-            android:text="@string/button_stopStart"
+            android:text="@string/button_start"
             android:textAllCaps="true"
             android:textColor="@color/colorAccent"
             android:textSize="@dimen/exercise_mode_textSize"

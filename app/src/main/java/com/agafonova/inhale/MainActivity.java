@@ -54,15 +54,12 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     private static final String TAG = MainActivity.class.getName();
     private static final String LAST_ID = "LAST_ID";
     private static final String APP_NAME = "Inhale";
+    private static final String EXERCISE_STRING = "EXERCISE_STRING";
 
     private static final int ENTER_FADE_DURATION = 100;
     private static final int EXIT_FADE_DURATION = 3000;
     private static final String TIME_FORMAT = "HH:mm:ss";
     private static final String TIMER_DATA_KEY = "TIMER_DATA";
-
-    private static final String START = "START";
-    private static final String STOP = "STOP";
-    private static final String SECONDS  = "seconds";
 
     private static final String PLAYER_POSITION = "PLAYER_POSITION";
     private static final String PLAYER_STATUS = "PLAYER_STATUS";
@@ -130,11 +127,11 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         animationDrawable.setExitFadeDuration(EXIT_FADE_DURATION);
 
         //Set start/stop button text
-        mButtonStopStart.setText(START);
+        mButtonStopStart.setText(R.string.button_start);
 
         //Get exercise ID
         mTimerDataViewModel = ViewModelProviders.of(this).get(TimerDataViewModel.class);
-        setExerciseID();
+        setExerciseIDAndPassDataToAppWidget();
 
         //Get timer data
         mTimerDataViewModel.getExerciseData().observe(this, new Observer<List<TimerData>>() {
@@ -149,10 +146,13 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
                         mNumberExhales = extractInteger(item.getExhale());
                         mNumberInhales = extractInteger(item.getInhale());
 
+                        //Save this data to pass it to the app widget
+                        mTimerData.setExhale(item.getExhale());
+                        mTimerData.setInhale(item.getInhale());
+
                         mTotalSeconds = (mNumberExhales + mNumberInhales)*1000;
 
-                        mExerciseString = String.valueOf(mNumberExhales) + " " + SECONDS + " : " + String.valueOf(mNumberInhales)
-                        + " " + SECONDS;
+                        mExerciseString = String.valueOf(mNumberExhales) + " : " + String.valueOf(mNumberInhales);
                         mExerciseMode.setText(mExerciseString);
 
                         //Setup timer
@@ -178,7 +178,11 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
             mNumberInhales = extractInteger(getString(R.string.exhale_4));
             mNumberExhales = extractInteger(getString(R.string.inhale_2));
 
-            mExerciseString = getString(R.string.exhale_4) + " " + SECONDS + " : " + getString(R.string.inhale_2) + " " + SECONDS;
+            //Save this data to pass it to the app widget
+            mTimerData.setExhale(getString(R.string.exhale_4));
+            mTimerData.setInhale(getString(R.string.inhale_2));
+
+            mExerciseString = getString(R.string.exhale_4) + " : " + getString(R.string.inhale_2);
             mExerciseMode.setText(mExerciseString);
 
             mTotalSeconds = (mNumberExhales + mNumberInhales)*1000;
@@ -267,11 +271,16 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         return result;
     }
 
-    private void setExerciseID() {
+    private void setExerciseIDAndPassDataToAppWidget() {
         SharedPreferences sharedPreferences = getApplicationContext().
                 getSharedPreferences(APP_NAME, Context.MODE_PRIVATE);
 
         mExerciseID = sharedPreferences.getString(LAST_ID,"");
+
+        if(mExerciseString != null && mTimerData != null) {
+            mExerciseString = mTimerData.getExhale() + " : " + mTimerData.getInhale();
+            saveExerciseStringForAppWidget(mExerciseString);
+        }
     }
 
     private void startTimer() {
@@ -282,7 +291,7 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
             if(mTimerCounter == 0) {
                 mTimer.startTimer();
                 mTimerCounter++;
-                mButtonStopStart.setText(STOP);
+                mButtonStopStart.setText(R.string.button_stop);
             }
             //restart on even number of clicks
             else if ((mTimerCounter % 2) == 0)
@@ -290,13 +299,13 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
                 mTimer.restartTimer();
                 mTime.setText(R.string.placeholder);
                 mTimerCounter++;
-                mButtonStopStart.setText(STOP);
+                mButtonStopStart.setText(R.string.button_stop);
             }
             //pause the timer on odd number of clicks (when the timer stops)
             else {
                 mTimer.pauseTimer();
                 mTimerCounter++;
-                mButtonStopStart.setText(START);
+                mButtonStopStart.setText(R.string.button_start);
             }
         }
         catch (Exception e) {
@@ -367,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         if (animationDrawable != null && !animationDrawable.isRunning()) {
             animationDrawable.start();
         }
-        setExerciseID();
+        setExerciseIDAndPassDataToAppWidget();
     }
 
     @Override
@@ -445,7 +454,15 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
             mPlayerPosition = savedInstanceState.getLong(PLAYER_POSITION);
             mPlayerStatus = savedInstanceState.getBoolean(PLAYER_STATUS);
             mTimerData = savedInstanceState.getParcelable(TIMER_DATA_KEY);
-            setExerciseID();
+            mExerciseString = savedInstanceState.getString(EXERCISE_STRING);
+            setExerciseIDAndPassDataToAppWidget();
         }
+    }
+
+    public void saveExerciseStringForAppWidget(String exerciseString) {
+        SharedPreferences sharedPreferences = getApplicationContext().
+                getSharedPreferences(APP_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.commit();
     }
 }

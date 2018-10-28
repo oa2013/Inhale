@@ -10,7 +10,8 @@
     <string name="breathe">Дышите нормально</string>
     <string name="tv_exercisemode_text">4 секунды: 2 секунды</string>
     <string name="button_length">Режим</string>
-    <string name="button_stopStart">Пуск</string>
+    <string name="button_start">Старт</string>
+    <string name="button_stop">Стоп</string>
     <string name="exhalation_inhalation">Выдох : Вдох</string>
     <string name="exhale_4">4 секунды</string>
     <string name="exhale_6">6 секунд</string>

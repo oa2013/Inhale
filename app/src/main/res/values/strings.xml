@@ -10,7 +10,8 @@
     <string name="breathe">Breathe normally</string>
     <string name="tv_exercisemode_text">"4 seconds : 2 seconds"</string>
     <string name="button_length">Length</string>
-    <string name="button_stopStart">Start</string>
+    <string name="button_start">Start</string>
+    <string name="button_stop">Stop</string>
     <string name="placeholder" translatable="false">"00:00:00"</string>
     <string name="exhalation_inhalation">"Exhalation : Inhalation"</string>
     <string name="exhale_4">"4 seconds"</string>

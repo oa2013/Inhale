@@ -1,13 +1,12 @@
 package com.agafonova.inhale.utils;
 
-import android.annotation.TargetApi;
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
-import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
+import com.agafonova.inhale.MainActivity;
 import com.agafonova.inhale.R;
 
 /**
@@ -16,57 +15,33 @@ import com.agafonova.inhale.R;
  */
 public class CollectionWidget extends AppWidgetProvider {
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+    @Override
+    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+
+        //Update all widgets
+        for (int appWidgetId : appWidgetIds) {
+            updateAppWidget(context, appWidgetManager, appWidgetId);
+        }
+
+        super.onUpdate(context, appWidgetManager, appWidgetIds);
+    }
+
+    public static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.inhale_appwidget);
+        Intent mainActivityIntent = new Intent(context, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, mainActivityIntent, 0);
+        views.setOnClickPendingIntent(R.id.iv_widget_icon, pendingIntent);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            setRemoteAdapter(context, views);
-        } else {
-            setRemoteAdapterV11(context, views);
-        }
+        Intent serviceIntent = new Intent(context, WidgetService.class);
+        context.startService(serviceIntent);
+
+        serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        views.setRemoteAdapter(R.id.widget_list, serviceIntent);
 
         appWidgetManager.updateAppWidget(appWidgetId, views);
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.widget_list);
     }
 
-    @Override
-    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        //Update all widgets
-        for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId);
-        }
-        super.onUpdate(context, appWidgetManager, appWidgetIds);
-    }
-
-    @Override
-    public void onEnabled(Context context) {
-    }
-
-    @Override
-    public void onDisabled(Context context) {
-    }
-
-    /**
-     * Sets the remote adapter used to fill in the list items
-     *
-     * @param views RemoteViews to set the RemoteAdapter
-     */
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    private static void setRemoteAdapter(Context context, @NonNull final RemoteViews views) {
-        views.setRemoteAdapter(R.id.widget_list,
-                new Intent(context, WidgetService.class));
-    }
-
-    /**
-     * Sets the remote adapter used to fill in the list items
-     *
-     * @param views RemoteViews to set the RemoteAdapter
-     */
-    @SuppressWarnings("deprecation")
-    private static void setRemoteAdapterV11(Context context, @NonNull final RemoteViews views) {
-        views.setRemoteAdapter(0, R.id.widget_list,
-                new Intent(context, WidgetService.class));
-    }
 }
 

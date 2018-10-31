@@ -6,7 +6,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="@dimen/widget_dimens"
     android:minHeight="@dimen/widget_dimens"
-    android:updatePeriodMillis="60000"
+    android:updatePeriodMillis="100"
     android:previewImage="@drawable/widget"
     android:initialLayout="@layout/inhale_appwidget"
     android:resizeMode="horizontal|vertical"

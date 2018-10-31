@@ -1,8 +1,10 @@
 package com.agafonova.inhale;
 
 import android.annotation.SuppressLint;
+import android.appwidget.AppWidgetManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,6 +24,7 @@ import android.widget.TextView;
 import com.agafonova.inhale.model.TimerData;
 import com.agafonova.inhale.ui.AboutActivity;
 import com.agafonova.inhale.ui.LengthActivity;
+import com.agafonova.inhale.utils.CollectionWidget;
 import com.agafonova.inhale.viewmodel.TimerDataViewModel;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -131,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
 
         //Get exercise ID
         mTimerDataViewModel = ViewModelProviders.of(this).get(TimerDataViewModel.class);
-        setExerciseIDAndPassDataToAppWidget();
+        setExerciseID();
 
         //Get timer data
         mTimerData = new TimerData();
@@ -140,32 +143,36 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
             public void onChanged(@Nullable final List<TimerData> items) {
 
                 for (TimerData item : items) {
+                    if (!mExerciseID.isEmpty()) {
 
-                    //If the IDs match, then set the exercise mode
-                    if (item.getId() == Integer.parseInt(mExerciseID)) {
+                        //If the IDs match, then set the exercise mode
+                        if (item.getId() == Integer.parseInt(mExerciseID)) {
 
-                        mNumberExhales = extractInteger(item.getExhale());
-                        mNumberInhales = extractInteger(item.getInhale());
+                            mNumberExhales = extractInteger(item.getExhale());
+                            mNumberInhales = extractInteger(item.getInhale());
 
-                        //Save this data to pass it to the app widget
-                        mTimerData.setExhale(item.getExhale());
-                        mTimerData.setInhale(item.getInhale());
+                            //Save this data to pass it to the app widget
+                            mTimerData.setExhale(item.getExhale());
+                            mTimerData.setInhale(item.getInhale());
 
-                        mTotalSeconds = (mNumberExhales + mNumberInhales)*1000;
+                            mTotalSeconds = (mNumberExhales + mNumberInhales) * 1000;
 
-                        mExerciseString = String.valueOf(mNumberExhales) + " : " + String.valueOf(mNumberInhales);
-                        mExerciseMode.setText(mExerciseString);
+                            mExerciseString = String.valueOf(mNumberExhales) + " : " + String.valueOf(mNumberInhales);
+                            mExerciseMode.setText(mExerciseString);
 
-                        //Setup timer
-                        LinearTimerView linearTimerView = findViewById(R.id.linearTimer);
-                        mTimerCounter = 0;
+                            saveExerciseStringForAppWidget(mExerciseString);
 
-                        mTimer = new LinearTimer.Builder()
-                                .linearTimerView(linearTimerView)
-                                .duration(mTotalSeconds)
-                                .timerListener(MainActivity.this)
-                                .getCountUpdate(LinearTimer.COUNT_UP_TIMER, 1000)
-                                .build();
+                            //Setup timer
+                            LinearTimerView linearTimerView = findViewById(R.id.linearTimer);
+                            mTimerCounter = 0;
+
+                            mTimer = new LinearTimer.Builder()
+                                    .linearTimerView(linearTimerView)
+                                    .duration(mTotalSeconds)
+                                    .timerListener(MainActivity.this)
+                                    .getCountUpdate(LinearTimer.COUNT_UP_TIMER, 1000)
+                                    .build();
+                        }
                     }
                 }
 
@@ -185,6 +192,8 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
 
             mExerciseString = getString(R.string.exhale_4) + " : " + getString(R.string.inhale_2);
             mExerciseMode.setText(mExerciseString);
+
+            saveExerciseStringForAppWidget(mExerciseString);
 
             mTotalSeconds = (mNumberExhales + mNumberInhales)*1000;
 
@@ -272,16 +281,11 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         return result;
     }
 
-    private void setExerciseIDAndPassDataToAppWidget() {
+    private void setExerciseID() {
         SharedPreferences sharedPreferences = getApplicationContext().
                 getSharedPreferences(APP_NAME, Context.MODE_PRIVATE);
 
         mExerciseID = sharedPreferences.getString(LAST_ID,"");
-
-        if(mExerciseString != null && mTimerData != null) {
-            mExerciseString = mTimerData.getExhale() + " : " + mTimerData.getInhale();
-            saveExerciseStringForAppWidget(mExerciseString);
-        }
     }
 
     private void startTimer() {
@@ -377,7 +381,8 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         if (animationDrawable != null && !animationDrawable.isRunning()) {
             animationDrawable.start();
         }
-        setExerciseIDAndPassDataToAppWidget();
+
+        setExerciseID();
     }
 
     @Override
@@ -443,9 +448,15 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(TIMER_DATA_KEY, mTimerData);
-        outState.putLong(PLAYER_POSITION, mPlayer.getCurrentPosition());
-        outState.putBoolean(PLAYER_STATUS, mPlayer.getPlayWhenReady());
+
+        if(mTimerData != null) {
+            outState.putParcelable(TIMER_DATA_KEY, mTimerData);
+        }
+
+        if(mPlayer != null) {
+            outState.putLong(PLAYER_POSITION, mPlayer.getCurrentPosition());
+            outState.putBoolean(PLAYER_STATUS, mPlayer.getPlayWhenReady());
+        }
     }
 
     @Override
@@ -456,7 +467,6 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
             mPlayerStatus = savedInstanceState.getBoolean(PLAYER_STATUS);
             mTimerData = savedInstanceState.getParcelable(TIMER_DATA_KEY);
             mExerciseString = savedInstanceState.getString(EXERCISE_STRING);
-            setExerciseIDAndPassDataToAppWidget();
         }
     }
 
@@ -464,6 +474,18 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         SharedPreferences sharedPreferences = getApplicationContext().
                 getSharedPreferences(APP_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(EXERCISE_STRING, mExerciseString);
         editor.commit();
+
+        updateWidget();
+    }
+
+    public void updateWidget() {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        int[] ids = appWidgetManager.getAppWidgetIds(new ComponentName(this, CollectionWidget.class));
+
+        if(ids.length > 0) {
+            CollectionWidget.updateAppWidget(this, appWidgetManager, ids[0]);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.agafonova.inhale.utils;
 
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,6 +9,7 @@ import android.widget.RemoteViewsService;
 import com.agafonova.inhale.R;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  * Created by Olga Agafonova on 10/28/18.
  */
@@ -19,9 +21,12 @@ public class InhaleAppRemoteViewsFactory implements RemoteViewsService.RemoteVie
 
     List<String> mCollection = new ArrayList<>();
     Context mContext = null;
+    private int mWidgetId;
 
     public InhaleAppRemoteViewsFactory(Context context, Intent intent) {
         mContext = context;
+        mCollection = new ArrayList<String>();
+        mWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
     }
 
     @Override
@@ -36,11 +41,17 @@ public class InhaleAppRemoteViewsFactory implements RemoteViewsService.RemoteVie
 
     @Override
     public void onDestroy() {
+        mCollection.clear();
     }
 
     @Override
     public int getCount() {
-        return mCollection.size();
+        if(mCollection != null) {
+            return mCollection.size();
+        }
+        else {
+            return 0;
+        }
     }
 
     @Override
@@ -77,8 +88,6 @@ public class InhaleAppRemoteViewsFactory implements RemoteViewsService.RemoteVie
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(APP_NAME, Context.MODE_PRIVATE);
         String exerciseString = sharedPreferences.getString(EXERCISE_STRING,"");
 
-        if(!exerciseString.isEmpty()) {
-            mCollection.add(exerciseString);
-        }
+        mCollection.add(exerciseString);
     }
 }

@@ -39,6 +39,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.RawResourceDataSource;
 import com.google.android.exoplayer2.util.Util;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     private int mNumberInhales = 0;
     private String mExerciseString = "No exercise mode set";
     private Activity mActivity;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @BindView(R.id.time)
     TextView mTime;
@@ -124,6 +126,9 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
                 .debuggable(true)
                 .build();
         Fabric.with(fabric);
+
+        //More logging with Firebase Analytics...
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         setSupportActionBar(mToolbar);
 
@@ -277,6 +282,11 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
 
         } catch (RawResourceDataSource.RawResourceDataSourceException e) {
             e.printStackTrace();
+
+            //Send error info to Firebase
+            Bundle fireBundle = new Bundle();
+            fireBundle.putString(FirebaseAnalytics.Param.CONTENT, e.getMessage());
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, fireBundle);
         }
     }
 

@@ -1,6 +1,8 @@
 package com.agafonova.inhale;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.appwidget.AppWidgetManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -83,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     private int mNumberExhales = 0;
     private int mNumberInhales = 0;
     private String mExerciseString = "No exercise mode set";
+    private Activity mActivity;
 
     @BindView(R.id.time)
     TextView mTime;
@@ -109,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mActivity = this;
 
         //Bind ButterKnife and start Crashlytics
         ButterKnife.bind(this);
@@ -231,7 +235,14 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), LengthActivity.class);
-                startActivity(intent);
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(mActivity).toBundle();
+                    startActivity(intent, bundle);
+                }
+                else {
+                    startActivity(intent);
+                }
             }
         });
 
@@ -334,9 +345,18 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.about) {
+
+            //Added a transition
             Intent intent = new Intent(this, AboutActivity.class);
-            startActivity(intent);
-            return true;
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+                startActivity(intent, bundle);
+                return true;
+            } else {
+                startActivity(intent);
+                return true;
+            }
         }
 
         return super.onOptionsItemSelected(item);

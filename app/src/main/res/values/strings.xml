@@ -24,6 +24,9 @@
     <string name="inhale_4">"4 seconds"</string>
     <string name="inhale_5">"5 seconds"</string>
     <string name="inhale_6">"6 seconds"</string>
+    <string name="play_button_desc">Play Button</string>
+    <string name="pause_button_desc">Pause Button</string>
+    <string name="app_icon_desc">App Icon</string>
     <string name="important">Important: do not exceed your comfort level.</string>
     <string name="about">About</string>
     <string name="copyright_label">Copyright Notice</string>

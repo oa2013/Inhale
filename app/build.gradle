@@ -23,7 +23,7 @@ android {
         debug {
             keyAlias 'InhaleApp'
             keyPassword 'inhale2018'
-            storeFile file('../inhale.jks')
+            storeFile file("${rootDir}/inhale.jks")
             storePassword 'inhale2018'
         }
     }

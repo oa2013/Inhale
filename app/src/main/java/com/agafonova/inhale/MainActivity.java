@@ -3,10 +3,8 @@ package com.agafonova.inhale;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.appwidget.AppWidgetManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,7 +24,6 @@ import android.widget.TextView;
 import com.agafonova.inhale.model.TimerData;
 import com.agafonova.inhale.ui.AboutActivity;
 import com.agafonova.inhale.ui.LengthActivity;
-import com.agafonova.inhale.utils.CollectionWidget;
 import com.agafonova.inhale.viewmodel.TimerDataViewModel;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -39,7 +36,6 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.RawResourceDataSource;
 import com.google.android.exoplayer2.util.Util;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -87,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     private int mNumberInhales = 0;
     private String mExerciseString = "No exercise mode set";
     private Activity mActivity;
-    private FirebaseAnalytics mFirebaseAnalytics;
 
     @BindView(R.id.time)
     TextView mTime;
@@ -126,9 +121,6 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
                 .debuggable(true)
                 .build();
         Fabric.with(fabric);
-
-        //More logging with Firebase Analytics...
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         setSupportActionBar(mToolbar);
 
@@ -282,11 +274,6 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
 
         } catch (RawResourceDataSource.RawResourceDataSourceException e) {
             e.printStackTrace();
-
-            //Send error info to Firebase
-            Bundle fireBundle = new Bundle();
-            fireBundle.putString(FirebaseAnalytics.Param.CONTENT, e.getMessage());
-            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, fireBundle);
         }
     }
 
@@ -506,16 +493,5 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(EXERCISE_STRING, mExerciseString);
         editor.commit();
-
-        updateWidget();
-    }
-
-    public void updateWidget() {
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        int[] ids = appWidgetManager.getAppWidgetIds(new ComponentName(this, CollectionWidget.class));
-
-        if(ids.length > 0) {
-            CollectionWidget.updateAppWidget(this, appWidgetManager, ids[0]);
-        }
     }
 }

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
- * Updated by Olga Agafonova on 10/13/18.
+ * Updated by Olga Agafonova on 11/16/18.
  *
  * Based on http://joshskeen.com/building-a-radiogroup-recyclerview/
  */
@@ -49,6 +49,11 @@ public class TimerDataAdapter extends RecyclerView.Adapter<TimerDataAdapter.Time
 
         try {
             final TimerData someData = mTimerDataList.get(position);
+
+            //When the app starts and nothing is selected, select the first item by default
+            if(mSelectedItem == -1) {
+                mSelectedItem = 0;
+            }
 
             holder.radioButton.setChecked(position == mSelectedItem);
             holder.radioButton.setText(someData.getExhale()+ " : " + someData.getInhale());

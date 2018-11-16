@@ -252,6 +252,9 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         mPlayerView.setPlayer(mPlayer);
         mPlayerView.setUseArtwork(false);
         mPlayerView.setControllerShowTimeoutMs(0);
+
+        //Prevent the screen from going dark and cutting off the music
+        mPlayerView.setKeepScreenOn(true);
     }
 
     private void updatePlayer() {
@@ -271,6 +274,9 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
             mPlayer.prepare(audioSource);
             mPlayer.setPlayWhenReady(mPlayerStatus);
             mPlayer.seekTo(mPlayerPosition);
+
+            //Prevent the screen from going dark and cutting off the music
+            mPlayerView.setKeepScreenOn(true);
 
         } catch (RawResourceDataSource.RawResourceDataSourceException e) {
             e.printStackTrace();

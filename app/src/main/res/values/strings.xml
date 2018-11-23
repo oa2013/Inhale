@@ -28,6 +28,7 @@
     <string name="pause_button_desc">Pause Button</string>
     <string name="app_icon_desc">App Icon</string>
     <string name="important">Important: do not exceed your comfort level.</string>
+    <string name="tv_cycle_text">Exercise Set:</string>
     <string name="about">About</string>
     <string name="copyright_label">Copyright Notice</string>
     <string name="copyright_notice">Copyright (c) 2018, Olga Agafonova. All rights reserved.</string>

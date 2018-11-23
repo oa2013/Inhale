@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
 
     private static final String PLAYER_POSITION = "PLAYER_POSITION";
     private static final String PLAYER_STATUS = "PLAYER_STATUS";
+    private static final String EXERCISE_COUNT = "EXERCISE_COUNT";
+    private static final String EXERCISE_CYCLE_COUNT = "EXERCISE_CYCLE_COUNT";
 
     private AnimationDrawable animationDrawable;
     private long mTotalSeconds = 30;
@@ -81,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
 
     private int mNumberExhales = 0;
     private int mNumberInhales = 0;
+    private int mExerciseCycleCount = 1;
+    private int mExerciseCount = 0;
     private String mExerciseString = "No exercise mode set";
     private Activity mActivity;
 
@@ -101,6 +105,9 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
 
     @BindView(R.id.tv_breathing_instructions)
     TextView mBreathingInstructions;
+
+    @BindView(R.id.tv_cycle_count)
+    TextView mExerciseCycle;
 
     @BindView(R.id.audio_view)
     PlayerView mPlayerView;
@@ -161,8 +168,6 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
                             mExerciseString = String.valueOf(mNumberExhales) + " : " + String.valueOf(mNumberInhales);
                             mExerciseMode.setText(mExerciseString);
 
-                            saveExerciseStringForAppWidget(mExerciseString);
-
                             //Setup timer
                             LinearTimerView linearTimerView = findViewById(R.id.linearTimer);
                             mTimerCounter = 0;
@@ -194,8 +199,6 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
             mExerciseString = getString(R.string.exhale_4) + " : " + getString(R.string.inhale_2);
             mExerciseMode.setText(mExerciseString);
 
-            saveExerciseStringForAppWidget(mExerciseString);
-
             mTotalSeconds = (mNumberExhales + mNumberInhales)*1000;
 
             LinearTimerView linearTimerView = findViewById(R.id.linearTimer);
@@ -217,6 +220,9 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         else {
             mTimerData = savedInstanceState.getParcelable(TIMER_DATA_KEY);
             mTime.setText(mTimerData.getTime());
+
+            mExerciseCount = savedInstanceState.getInt(EXERCISE_COUNT);
+            mExerciseCycleCount = savedInstanceState.getInt(EXERCISE_CYCLE_COUNT);
         }
 
         //Setup start/stop button listener
@@ -311,6 +317,8 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
                 mTimer.startTimer();
                 mTimerCounter++;
                 mButtonStopStart.setText(R.string.button_stop);
+
+                incrementExerciseCycle();
             }
             //restart on even number of clicks
             else if ((mTimerCounter % 2) == 0)
@@ -319,17 +327,35 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
                 mTime.setText(R.string.placeholder);
                 mTimerCounter++;
                 mButtonStopStart.setText(R.string.button_stop);
+
+                incrementExerciseCycle();
             }
             //pause the timer on odd number of clicks (when the timer stops)
             else {
                 mTimer.pauseTimer();
                 mTimerCounter++;
                 mButtonStopStart.setText(R.string.button_start);
+
+                incrementExerciseCycle();
             }
+
         }
         catch (Exception e) {
             Crashlytics.log(Log.VERBOSE, TAG, e.toString());
         }
+    }
+
+    private void incrementExerciseCycle() {
+        //Each exercise cycle contains 5 exercises
+        mExerciseCount++;
+
+        if((mExerciseCount % 5)== 0) {
+            mExerciseCycleCount++;
+            mExerciseCount = 0;
+        }
+
+        mExerciseCycle.setText(getResources().getString(R.string.tv_cycle_text) + " " + mExerciseCycleCount + "/" + mExerciseCount);
+
     }
 
     @Override
@@ -379,6 +405,13 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     public void onStart() {
         super.onStart();
 
+        try{
+            mExerciseCycle.setText(getResources().getString(R.string.tv_cycle_text) + " " + mExerciseCycleCount + "/" + mExerciseCount);
+        }
+        catch(Exception e) {
+            Crashlytics.log(Log.VERBOSE, TAG, e.toString());
+        }
+
         if(mPlayer == null) {
             initializePlayer();
             updatePlayer();
@@ -392,6 +425,15 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
     protected void onResume() {
         super.onResume();
         hideSystemUi();
+
+        try{
+            mTimerData = new TimerData();
+            mTimerData.setTime("00:00:00");
+            mExerciseCycle.setText(getResources().getString(R.string.tv_cycle_text) + " " + mExerciseCycleCount + "/" + mExerciseCount);
+        }
+        catch(Exception e) {
+            Crashlytics.log(Log.VERBOSE, TAG, e.toString());
+        }
 
         if ((Util.SDK_INT <= 23 || mPlayer == null)) {
             initializePlayer();
@@ -474,6 +516,8 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
 
         if(mTimerData != null) {
             outState.putParcelable(TIMER_DATA_KEY, mTimerData);
+            outState.putInt(EXERCISE_COUNT, mExerciseCount);
+            outState.putInt(EXERCISE_CYCLE_COUNT, mExerciseCycleCount);
         }
 
         if(mPlayer != null) {
@@ -490,14 +534,8 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
             mPlayerStatus = savedInstanceState.getBoolean(PLAYER_STATUS);
             mTimerData = savedInstanceState.getParcelable(TIMER_DATA_KEY);
             mExerciseString = savedInstanceState.getString(EXERCISE_STRING);
+            mExerciseCount = savedInstanceState.getInt(EXERCISE_COUNT);
+            mExerciseCycleCount = savedInstanceState.getInt(EXERCISE_CYCLE_COUNT);
         }
-    }
-
-    public void saveExerciseStringForAppWidget(String exerciseString) {
-        SharedPreferences sharedPreferences = getApplicationContext().
-                getSharedPreferences(APP_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(EXERCISE_STRING, mExerciseString);
-        editor.commit();
     }
 }

@@ -28,6 +28,7 @@
     <string name="app_icon_desc">Иконка для приложения</string>
     <string name="important">Внимание: не превышайте ваш уровень комфорта.</string>
     <string name="about">Об Этом Приложении</string>
+    <string name="tv_cycle_text">Цикл упражнений:</string>
     <string name="copyright_label">Уведомление об Авторских Правах</string>
     <string name="copyright_notice">Copyright (c) 2018, Ольга Агафонова. Все права защищены.</string>
     <string name="music_label">Музыкальная Лицензия</string>

@@ -29,6 +29,13 @@
     <string name="app_icon_desc">App Icon</string>
     <string name="important">Important: do not exceed your comfort level.</string>
     <string name="tv_cycle_text">Exercise Set:</string>
+    <string name="step_one">Start the first exercise set by pressing \'Start\'.</string>
+    <string name="step_two">Exhale and inhale for the specified number of seconds. For example, 4:2 means that
+        you will exhale for 4 seconds and inhale for 2 seconds.</string>
+    <string name="step_three">Each exercise set has 5 exercises. We recommend you
+    begin with 1 set a day.</string>
+    <string name="step_four">You can change the length of exhalations and inhalations
+    by pressing \'Length\'.</string>
     <string name="about">About</string>
     <string name="copyright_label">Copyright Notice</string>
     <string name="copyright_notice">Copyright (c) 2018, Olga Agafonova. All rights reserved.</string>

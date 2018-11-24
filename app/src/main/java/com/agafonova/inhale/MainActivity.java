@@ -26,6 +26,8 @@ import com.agafonova.inhale.ui.AboutActivity;
 import com.agafonova.inhale.ui.LengthActivity;
 import com.agafonova.inhale.viewmodel.TimerDataViewModel;
 import com.crashlytics.android.Crashlytics;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
@@ -216,6 +218,7 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
         {
             mTimerData = new TimerData();
             mTimerData.setTime("00:00:00");
+            appWalkthrough();
         }
         else {
             mTimerData = savedInstanceState.getParcelable(TIMER_DATA_KEY);
@@ -251,6 +254,63 @@ public class MainActivity extends AppCompatActivity implements LinearTimer.Timer
 
         initializePlayer();
         updatePlayer();
+    }
+
+    private void appWalkthrough() {
+
+        final TapTargetSequence sequence = new TapTargetSequence(this)
+                .targets(
+                        TapTarget.forView(findViewById(R.id.button_stopStart), "",
+                                getResources().getString(R.string.step_one))
+                                .cancelable(true)
+                                .titleTextSize(30)
+                                .descriptionTextSize(26)
+                                .dimColor(R.color.colorPrimaryDark)
+                                .outerCircleColor(R.color.colorPrimary)
+                                .transparentTarget(true)
+                                .textColor(android.R.color.white),
+                        TapTarget.forView(findViewById(R.id.tv_exercise_mode), "",
+                                getResources().getString(R.string.step_two))
+                                .cancelable(true)
+                                .titleTextSize(30)
+                                .descriptionTextSize(26)
+                                .dimColor(R.color.colorPrimaryDark)
+                                .outerCircleColor(R.color.colorPrimary)
+                                .transparentTarget(true)
+                                .textColor(android.R.color.white),
+                        TapTarget.forView(findViewById(R.id.tv_cycle_count), "",
+                                getResources().getString(R.string.step_three))
+                                .cancelable(true)
+                                .titleTextSize(30)
+                                .descriptionTextSize(26)
+                                .dimColor(R.color.colorPrimaryDark)
+                                .outerCircleColor(R.color.colorPrimary)
+                                .transparentTarget(true)
+                                .textColor(android.R.color.white),
+                        TapTarget.forView(findViewById(R.id.button_length), "",
+                                getResources().getString(R.string.step_four))
+                                .cancelable(true)
+                                .titleTextSize(30)
+                                .descriptionTextSize(26)
+                                .dimColor(R.color.colorPrimaryDark)
+                                .outerCircleColor(R.color.colorPrimary)
+                                .transparentTarget(true)
+                                .textColor(android.R.color.white))
+                .listener(new TapTargetSequence.Listener() {
+                    @Override
+                    public void onSequenceFinish() {
+                    }
+
+                    @Override
+                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+                    }
+
+                    @Override
+                    public void onSequenceCanceled(TapTarget lastTarget) {
+                    }
+                });
+
+        sequence.start();
     }
 
     private void initializePlayer() {
